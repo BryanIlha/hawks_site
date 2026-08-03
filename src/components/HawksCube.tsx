@@ -30,10 +30,10 @@ function makeFaceTexture(label: string, accent: string) {
   context.fillStyle = accent;
   context.fillRect(76, 78, 176, 12);
   context.fillStyle = "#f5f0e7";
-  context.font = '700 92px "Manrope", sans-serif';
+  context.font = '650 92px "Instrument Sans", sans-serif';
   context.fillText(label.toUpperCase(), 76, 610);
   context.fillStyle = "rgba(241, 235, 221, 0.62)";
-  context.font = '500 27px "Manrope", sans-serif';
+  context.font = '450 27px "Instrument Sans", sans-serif';
   context.fillText("HAWKS BI / TRÊS FRENTES", 76, 690);
 
   const texture = new THREE.CanvasTexture(canvas);
@@ -157,8 +157,8 @@ export const HawksCube = forwardRef(function HawksCube(
 
     const faceAssets = [
       addLabeledFace(cube, "Dados", "#f5f0e7", new THREE.Vector3(0, 0, 1.61), new THREE.Euler()),
-      addLabeledFace(cube, "Inteligência", "#f4a064", new THREE.Vector3(1.61, 0, 0), new THREE.Euler(0, Math.PI / 2, 0)),
       addLabeledFace(cube, "Automação", "#f2610a", new THREE.Vector3(0, 1.61, 0), new THREE.Euler(-Math.PI / 2, 0, 0)),
+      addLabeledFace(cube, "Tecnologia", "#f4a064", new THREE.Vector3(1.61, 0, 0), new THREE.Euler(0, Math.PI / 2, 0)),
     ];
 
     const targetRotation = FRONT_STATES[0].rotation.clone();
@@ -166,7 +166,11 @@ export const HawksCube = forwardRef(function HawksCube(
     let currentFront: FrontId = "dados";
     let visible = true;
     let running = true;
+    let rendering = false;
     let frameId = 0;
+    let settledAt = 0;
+    let floatStrength = 0;
+    let lastFrameTime = 0;
 
     const reportFront = (front: FrontId) => {
       if (front !== currentFront) {
@@ -176,15 +180,26 @@ export const HawksCube = forwardRef(function HawksCube(
     };
 
     const renderStatic = () => {
+      settledAt = 0;
+      floatStrength = 0;
       currentRotation.copy(targetRotation);
       cube.quaternion.copy(currentRotation);
       root.position.y = 0;
+      root.rotation.z = 0;
       renderer.render(scene, camera);
+    };
+
+    const resetFloat = () => {
+      settledAt = 0;
+      floatStrength = 0;
+      root.position.y = 0;
+      root.rotation.z = 0;
     };
 
     const setFront = (front: FrontId) => {
       const next = FRONT_STATES.find((candidate) => candidate.id === front);
       if (!next) return;
+      resetFloat();
       targetRotation.copy(next.rotation);
       reportFront(front);
       if (reducedMotion) renderStatic();
@@ -192,6 +207,7 @@ export const HawksCube = forwardRef(function HawksCube(
 
     const setProgress = (progress: number) => {
       const resolved = resolveFrontProgress(progress);
+      resetFloat();
       targetRotation.copy(resolved.rotation);
       reportFront(resolved.active.id);
       if (reducedMotion) renderStatic();
@@ -209,29 +225,52 @@ export const HawksCube = forwardRef(function HawksCube(
     };
 
     const render = (time: number) => {
-      if (!running) return;
-      if (!reducedMotion) frameId = requestAnimationFrame(render);
-      if (!visible) return;
+      if (!running || !visible || reducedMotion) {
+        rendering = false;
+        return;
+      }
 
-      const idle = reducedMotion ? 0 : Math.sin(time * 0.00072) * 0.012;
-      const idleQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(idle * 0.5, idle, 0));
-      const desired = targetRotation.clone().multiply(idleQuaternion);
-      currentRotation.slerp(desired, reducedMotion ? 1 : 0.12);
+      frameId = requestAnimationFrame(render);
+      const deltaSeconds = lastFrameTime ? Math.min((time - lastFrameTime) / 1000, 0.1) : 0;
+      lastFrameTime = time;
+      currentRotation.slerp(targetRotation, 0.12);
       cube.quaternion.copy(currentRotation);
-      root.position.y = reducedMotion ? 0 : Math.sin(time * 0.00055) * 0.035;
+      const isSettled = currentRotation.angleTo(targetRotation) < 0.008;
+
+      if (isSettled && settledAt === 0) settledAt = time;
+      if (!isSettled) settledAt = 0;
+
+      const shouldFloat = settledAt > 0 && time - settledAt > 520;
+      floatStrength = THREE.MathUtils.damp(floatStrength, shouldFloat ? 1 : 0, 4.5, deltaSeconds);
+      root.position.y = Math.sin(time * 0.00105) * 0.045 * floatStrength;
+      root.rotation.z = Math.sin(time * 0.00068) * 0.012 * floatStrength;
       renderer.render(scene, camera);
+    };
+
+    const startRender = () => {
+      if (!running || !visible || reducedMotion || rendering) return;
+      rendering = true;
+      lastFrameTime = 0;
+      frameId = requestAnimationFrame(render);
     };
 
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(mount);
     const intersectionObserver = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
-      if (visible) renderer.render(scene, camera);
+      if (visible) {
+        renderer.render(scene, camera);
+        startRender();
+      } else {
+        cancelAnimationFrame(frameId);
+        rendering = false;
+      }
     }, { threshold: 0.01 });
     intersectionObserver.observe(mount);
 
     resize();
-    render(performance.now());
+    if (reducedMotion) renderStatic();
+    else startRender();
 
     return () => {
       running = false;
@@ -263,7 +302,7 @@ export const HawksCube = forwardRef(function HawksCube(
       ref={mountRef}
       className="hawks-cube"
       role="img"
-      aria-label="Cubo HAWKS BI com as frentes Dados, Inteligência e Automação"
+      aria-label="Cubo HAWKS BI com as frentes Dados, Automação e Tecnologia"
     >
       {webglUnavailable && (
         <div className="cube-fallback" aria-label="Frentes HAWKS BI">

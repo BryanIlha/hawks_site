@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { FRONT_STATES, type FrontId } from "../lib/fronts";
 import { gsap, useGSAP } from "../lib/gsap";
-import { logoIcon } from "../lib/brandAssets";
+import { logoMarkLight } from "../lib/brandAssets";
 import { usePrefersReducedMotion } from "../lib/useReducedMotion";
 import { HawksCube, type HawksCubeHandle } from "./HawksCube";
 
@@ -77,13 +77,13 @@ export function Hero() {
         <div className="hero-layout section-frame">
           <div className="hero-copy">
             <p className="eyebrow hero-brandline" data-hero-brand>
-              <span className="hero-brandline__mark"><img src={logoIcon} alt="" /></span>
-              <span>Data · AI · Automation</span>
+              <span className="hero-brandline__mark"><img src={logoMarkLight} alt="" width="1254" height="1254" /></span>
+              <span>Dados · Automação · Tecnologia</span>
             </p>
             <div className="hero-copy__body">
-              <h1 data-hero-title>Três frentes.<br /><em>Um sistema.</em></h1>
+              <h1 data-hero-title>Problemas reais.<br /><em>Soluções sob medida.</em></h1>
               <p className="hero-lede" data-hero-copy>
-                Transformamos evidência em ação: inteligência de dados, software sob medida e automações que continuam funcionando quando a operação acelera.
+                Criamos sistemas para empresas que buscam mais controle e eficiência.
               </p>
             </div>
             <div className="hero-actions" data-hero-actions>

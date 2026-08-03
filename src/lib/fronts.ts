@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export type FrontId = "dados" | "inteligencia" | "automacao";
+export type FrontId = "dados" | "automacao" | "tecnologia";
 
 export type FrontState = {
   id: FrontId;
@@ -21,34 +21,34 @@ export const FRONT_STATES: FrontState[] = [
     id: "dados",
     index: 0,
     label: "Dados",
-    kicker: "Evidência operacional",
-    detail: "A resposta antes da pergunta.",
+    kicker: "Fluxos de dados",
+    detail: "Dados prontos para decidir.",
     description:
-      "Uma camada confiável para entender o que está acontecendo antes de decidir o próximo movimento.",
+      "Fluxos de dados confiáveis para decisões claras.",
     accent: "#f5f0e7",
     rotation: quaternionFrom(-0.34, 0.56, 0.02),
   },
   {
-    id: "inteligencia",
-    index: 1,
-    label: "Inteligência",
-    kicker: "Modelos no seu contexto",
-    detail: "Previsão que cabe na operação.",
-    description:
-      "Modelos preditivos treinados na realidade do negócio — não em um benchmark distante.",
-    accent: "#f4a064",
-    rotation: quaternionFrom(-0.2, -1.12, -0.04),
-  },
-  {
     id: "automacao",
-    index: 2,
+    index: 1,
     label: "Automação",
-    kicker: "Ação em produção",
-    detail: "A decisão que continua circulando.",
+    kicker: "Automação em produção",
+    detail: "Rotinas que seguem em movimento.",
     description:
-      "Software e fluxos que conectam sistemas e transformam uma decisão clara em ação repetível.",
+      "Automações que conectam sistemas e fazem a operação avançar.",
     accent: "#f2610a",
     rotation: quaternionFrom(1.12, 0.52, 0.04),
+  },
+  {
+    id: "tecnologia",
+    index: 2,
+    label: "Tecnologia",
+    kicker: "Softwares sob medida",
+    detail: "Tecnologia no ritmo do negócio.",
+    description:
+      "Softwares e integrações que acompanham a operação.",
+    accent: "#f4a064",
+    rotation: quaternionFrom(-0.2, -1.12, -0.04),
   },
 ];
 

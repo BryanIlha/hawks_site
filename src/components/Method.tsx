@@ -21,7 +21,7 @@ export function Method() {
         </div>
         <div className="method-main">
           <h2 data-reveal>Dado bruto.<br /><em>Decisão clara.</em></h2>
-          <p className="method-lede" data-reveal>Uma frente encontra a evidência. A próxima transforma evidência em inteligência. A terceira faz a decisão circular pela operação.</p>
+          <p className="method-lede" data-reveal>Organizamos dados, construímos tecnologia e automatizamos o que precisa rodar.</p>
           <div className="method-steps">
             {steps.map(([number, title, description]) => (
               <div className="method-step" key={number} data-reveal>

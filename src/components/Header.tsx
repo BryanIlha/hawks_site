@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { logoLockup } from "../lib/brandAssets";
+import { logoWordmark } from "../lib/brandAssets";
 import { gsap, useGSAP } from "../lib/gsap";
 import { usePrefersReducedMotion } from "../lib/useReducedMotion";
 
@@ -66,7 +66,7 @@ export function Header() {
     <header ref={headerRef} className="site-header">
       <div className="nav-island">
         <a className="nav-brand" href="#top" onClick={close} aria-label="HAWKS BI — início">
-          <img src={logoLockup} alt="HAWKS BI" />
+          <img src={logoWordmark} alt="HAWKS BI" width="2111" height="745" />
         </a>
 
         <nav className="nav-links" aria-label="Navegação principal">

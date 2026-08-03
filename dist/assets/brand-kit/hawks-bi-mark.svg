@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1254 1254" role="img" aria-labelledby="title desc">
+  <title id="title">Hawks BI mark</title>
+  <desc id="desc">An orange and near-black three-panel geometric cube mark.</desc>
+
+  <defs>
+    <linearGradient id="orange-face" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff7900"/>
+      <stop offset="1" stop-color="#e65b00"/>
+    </linearGradient>
+    <linearGradient id="black-top" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a1616"/>
+      <stop offset="1" stop-color="#080707"/>
+    </linearGradient>
+    <linearGradient id="black-side" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#171313"/>
+      <stop offset="1" stop-color="#080707"/>
+    </linearGradient>
+  </defs>
+
+  <g stroke="#211b1b" stroke-width="1.2" stroke-linejoin="round">
+    <path fill="url(#black-top)" d="M616 195c12-1 23 2 33 8l252 143c11 6 16 16 13 27-2 9-8 16-16 21L703 516c-9 6-14 15-14 26l1 14c1 10-4 17-11 20-4 2-8 1-12-1L374 390c-13-8-20-20-18-31 1-9 8-17 17-22l232-135c4-3 8-5 11-7z"/>
+    <path fill="url(#orange-face)" stroke="#f26b00" d="M311 404c5 0 9 1 14 4l316 184c11 6 17 16 17 29l-1 327c0 11-3 20-10 27-10 11-26 14-39 7L307 800c-15-9-23-21-23-36V431c0-16 11-27 27-27z"/>
+    <path fill="url(#black-side)" d="M957 406c9-5 19-2 26 5 6 6 8 14 8 24v400c0 13-6 24-16 31l-121 78c-9 6-19 7-28 2-10-5-14-15-14-29V795c0-16-6-27-20-35l-50-30c-12-8-18-18-18-32V565c0-15 7-27 20-35l213-124z"/>
+  </g>
+</svg>

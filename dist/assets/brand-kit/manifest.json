@@ -1,0 +1,57 @@
+{
+  "name": "HAWKS BI brand kit",
+  "version": "1.0.0",
+  "format": "SVG",
+  "language": "pt-BR",
+  "assets": [
+    {
+      "file": "hawks-bi-mark.svg",
+      "type": "official-mark",
+      "background": "light",
+      "vector": true
+    },
+    {
+      "file": "hawks-bi-mark-light.svg",
+      "type": "official-mark",
+      "background": "dark",
+      "vector": true
+    },
+    {
+      "file": "hawks-bi-mark-mono-ink.svg",
+      "type": "monochrome-mark",
+      "background": "light",
+      "vector": true
+    },
+    {
+      "file": "hawks-bi-mark-mono-paper.svg",
+      "type": "monochrome-mark",
+      "background": "dark",
+      "vector": true
+    },
+    {
+      "file": "hawks-bi-wordmark.svg",
+      "type": "official-wordmark",
+      "background": "light",
+      "vector": true
+    },
+    {
+      "file": "hawks-bi-wordmark-reverse.svg",
+      "type": "reverse-wordmark",
+      "background": "dark",
+      "vector": true
+    }
+  ],
+  "palette": {
+    "ink": "#080808",
+    "paper": "#F5F0E7",
+    "orange": "#F2610A",
+    "signal": "#F4A064",
+    "logoOrange": "#FF7900",
+    "logoOrangeShadow": "#E65B00"
+  },
+  "font": {
+    "family": "Instrument Sans",
+    "source": "Google Fonts",
+    "weights": [400, 450, 500, 550, 600, 650, 700]
+  }
+}

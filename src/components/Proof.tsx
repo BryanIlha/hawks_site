@@ -4,7 +4,7 @@ import { revealSection, useGSAP } from "../lib/gsap";
 const proofPoints = [
   ["CONTEXTO", "Começamos pela decisão que precisa ficar mais clara."],
   ["MODELO", "Construímos a camada certa para o seu negócio, sem plataforma engessada."],
-  ["ROTINA", "Colocamos a inteligência dentro do fluxo que o time já opera."],
+  ["ROTINA", "Levamos a solução para o fluxo que o time já opera."],
   ["ACOMPANHAMENTO", "Acompanhamos o que foi entregue até virar parte da operação."],
 ] as const;
 
