@@ -126,10 +126,8 @@ export const HawksCube = forwardRef(function HawksCube(
     fill.position.set(-4, -2, 5);
     scene.add(ambient, key, fill);
 
-    const root = new THREE.Group();
     const cube = new THREE.Group();
-    root.add(cube);
-    scene.add(root);
+    scene.add(cube);
 
     const cellGeometry = new THREE.BoxGeometry(CELL_SIZE, CELL_SIZE, CELL_SIZE);
     const textureLoader = new THREE.TextureLoader();
@@ -168,8 +166,6 @@ export const HawksCube = forwardRef(function HawksCube(
     let running = true;
     let rendering = false;
     let frameId = 0;
-    let settledAt = 0;
-    let floatStrength = 0;
     let lastFrameTime = 0;
 
     const reportFront = (front: FrontId) => {
@@ -180,37 +176,26 @@ export const HawksCube = forwardRef(function HawksCube(
     };
 
     const renderStatic = () => {
-      settledAt = 0;
-      floatStrength = 0;
       currentRotation.copy(targetRotation);
       cube.quaternion.copy(currentRotation);
-      root.position.y = 0;
-      root.rotation.z = 0;
       renderer.render(scene, camera);
-    };
-
-    const resetFloat = () => {
-      settledAt = 0;
-      floatStrength = 0;
-      root.position.y = 0;
-      root.rotation.z = 0;
     };
 
     const setFront = (front: FrontId) => {
       const next = FRONT_STATES.find((candidate) => candidate.id === front);
       if (!next) return;
-      resetFloat();
       targetRotation.copy(next.rotation);
       reportFront(front);
       if (reducedMotion) renderStatic();
+      else startRender();
     };
 
     const setProgress = (progress: number) => {
       const resolved = resolveFrontProgress(progress);
-      resetFloat();
       targetRotation.copy(resolved.rotation);
       reportFront(resolved.active.id);
       if (reducedMotion) renderStatic();
+      else startRender();
     };
 
     apiRef.current = { setFront, setProgress };
@@ -230,21 +215,22 @@ export const HawksCube = forwardRef(function HawksCube(
         return;
       }
 
-      frameId = requestAnimationFrame(render);
-      const deltaSeconds = lastFrameTime ? Math.min((time - lastFrameTime) / 1000, 0.1) : 0;
+      const deltaSeconds = lastFrameTime ? Math.min((time - lastFrameTime) / 1000, 0.1) : 1 / 60;
       lastFrameTime = time;
-      currentRotation.slerp(targetRotation, 0.12);
+      const rotationEase = deltaSeconds ? 1 - Math.exp(-16 * deltaSeconds) : 1;
+      currentRotation.slerp(targetRotation, rotationEase);
       cube.quaternion.copy(currentRotation);
-      const isSettled = currentRotation.angleTo(targetRotation) < 0.008;
-
-      if (isSettled && settledAt === 0) settledAt = time;
-      if (!isSettled) settledAt = 0;
-
-      const shouldFloat = settledAt > 0 && time - settledAt > 520;
-      floatStrength = THREE.MathUtils.damp(floatStrength, shouldFloat ? 1 : 0, 4.5, deltaSeconds);
-      root.position.y = Math.sin(time * 0.00105) * 0.045 * floatStrength;
-      root.rotation.z = Math.sin(time * 0.00068) * 0.012 * floatStrength;
       renderer.render(scene, camera);
+
+      if (currentRotation.angleTo(targetRotation) < 0.003) {
+        currentRotation.copy(targetRotation);
+        cube.quaternion.copy(currentRotation);
+        rendering = false;
+        renderer.render(scene, camera);
+        return;
+      }
+
+      frameId = requestAnimationFrame(render);
     };
 
     const startRender = () => {

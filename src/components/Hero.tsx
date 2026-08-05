@@ -1,7 +1,6 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { FRONT_STATES, type FrontId } from "../lib/fronts";
 import { gsap, useGSAP } from "../lib/gsap";
-import { logoMarkLight } from "../lib/brandAssets";
 import { usePrefersReducedMotion } from "../lib/useReducedMotion";
 import { HawksCube, type HawksCubeHandle } from "./HawksCube";
 
@@ -20,6 +19,21 @@ export function Hero() {
     cubeRef.current?.setFront(front.id);
   };
 
+  const handleFrontKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>, index: number) => {
+    const direction = event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 0;
+    if (!direction && event.key !== "Home" && event.key !== "End") return;
+
+    event.preventDefault();
+    const nextIndex = event.key === "Home"
+      ? 0
+      : event.key === "End"
+        ? FRONT_STATES.length - 1
+        : (index + direction + FRONT_STATES.length) % FRONT_STATES.length;
+    const nextFront = FRONT_STATES[nextIndex];
+    selectFront(nextFront);
+    requestAnimationFrame(() => document.getElementById(`front-selector-${nextFront.id}`)?.focus());
+  };
+
   useGSAP(() => {
     const media = gsap.matchMedia();
 
@@ -30,8 +44,7 @@ export function Hero() {
       const intro = gsap.timeline({ defaults: { ease: "power4.out" } });
       if (shouldAnimate) {
         intro
-          .from("[data-hero-brand]", { autoAlpha: 0, y: 14, scale: 0.96, duration: 0.55 })
-          .from("[data-hero-title]", { autoAlpha: 0, y: 52, duration: 0.92 }, "<0.08")
+          .from("[data-hero-title]", { autoAlpha: 0, y: 42, duration: 0.92 })
           .from("[data-hero-copy]", { autoAlpha: 0, y: 22, duration: 0.72 }, "<0.18")
           .from("[data-hero-actions]", { autoAlpha: 0, y: 18, duration: 0.62 }, "<0.12")
           .from("[data-hero-object]", { autoAlpha: 0, scale: 0.92, duration: 1.1 }, "<0.06");
@@ -48,13 +61,13 @@ export function Hero() {
           pin: stickyRef.current,
           start: "top top",
           end: () => `+=${Math.max(1300, window.innerHeight * 1.75)}`,
-          scrub: 1,
+          scrub: 0.45,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           snap: {
             snapTo: [0, 0.5, 1],
             delay: 0.08,
-            duration: { min: 0.18, max: 0.56 },
+            duration: { min: 0.12, max: 0.3 },
             ease: "power3.out",
           },
         },
@@ -76,10 +89,6 @@ export function Hero() {
       <div ref={stickyRef} className="hero-sticky">
         <div className="hero-layout section-frame">
           <div className="hero-copy">
-            <p className="eyebrow hero-brandline" data-hero-brand>
-              <span className="hero-brandline__mark"><img src={logoMarkLight} alt="" width="1254" height="1254" /></span>
-              <span>Dados · Automação · Tecnologia</span>
-            </p>
             <div className="hero-copy__body">
               <h1 data-hero-title>Problemas reais.<br /><em>Soluções sob medida.</em></h1>
               <p className="hero-lede" data-hero-copy>
@@ -111,9 +120,12 @@ export function Hero() {
                 <button
                   type="button"
                   key={front.id}
+                  id={`front-selector-${front.id}`}
                   className={front.id === active.id ? "is-active" : ""}
                   role="radio"
                   aria-checked={front.id === active.id}
+                  tabIndex={front.id === active.id ? 0 : -1}
+                  onKeyDown={(event) => handleFrontKeyDown(event, index)}
                   onClick={() => selectFront(front)}
                 >
                   <span>0{index + 1}</span>{front.label}

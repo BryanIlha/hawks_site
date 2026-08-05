@@ -144,15 +144,11 @@ img { display: block; max-width: 100%; }
 .eyebrow-mark { width: 0.45rem; height: 0.45rem; flex: 0 0 auto; background: var(--orange); }
 .eyebrow-dark { color: rgba(10, 10, 10, 0.58); }
 .eyebrow-dark .eyebrow-mark { background: var(--orange); }
-.hero-brandline { gap: 0.9rem; color: rgba(245, 240, 231, 0.78); }
-.hero-brandline__mark { display: grid; place-items: center; width: 3.6rem; height: 3.6rem; background: transparent; }
-.hero-brandline__mark img { width: 175%; max-width: none; height: 175%; object-fit: contain; }
-
 .hero-section { min-height: 160svh; background: var(--ink); }
 .hero-sticky { position: relative; display: flex; align-items: center; min-height: 100svh; padding: 7rem 0 4rem; }
 .hero-layout { display: grid; grid-template-columns: minmax(0, 0.86fr) minmax(32rem, 1.14fr); align-items: center; gap: clamp(2rem, 7vw, 8rem); }
-.hero-copy { padding-top: 1.5rem; }
-.hero-copy__body { margin-top: clamp(4.5rem, 10vh, 8rem); }
+.hero-copy { padding-top: 0; transform: translateY(-2.2rem); }
+.hero-copy__body { margin-top: 0; }
 h1, h2, h3, p { margin-top: 0; }
 h1, h2 { font-family: "Instrument Sans", ui-sans-serif, system-ui, sans-serif; font-weight: 650; letter-spacing: -0.045em; line-height: 0.97; text-wrap: balance; }
 h1 { max-width: 9ch; margin-bottom: 2rem; font-size: clamp(3.8rem, 6.7vw, 6rem); }
@@ -281,7 +277,8 @@ h1 em, h2 em { color: var(--orange); font-style: normal; }
   .hero-section { min-height: auto; }
   .hero-sticky { min-height: auto; padding: 9rem 0 4rem; }
   .hero-layout, .proof-intro, .services-heading, .method-layout, .contact-layout { grid-template-columns: 1fr; gap: 3rem; }
-  .hero-copy__body { margin-top: 4rem; }
+  .hero-copy { transform: translateY(-1rem); }
+  .hero-copy__body { margin-top: 0; }
   .hero-object__stage { min-height: 31rem; }
   .hero-scroll-note { display: none; }
   .proof-section, .services-section, .method-section { padding: 7rem 0; }
@@ -303,9 +300,9 @@ h1 em, h2 em { color: var(--orange); font-style: normal; }
 
 @media (max-width: 560px) {
   h1 { font-size: clamp(3.4rem, 16vw, 5rem); }
-  .hero-brandline__mark { width: 3.1rem; height: 3.1rem; }
   .footer-lockup { width: 10.4rem; height: 3.68rem; }
-  .hero-copy__body { margin-top: 3.5rem; }
+  .hero-copy { transform: translateY(-0.5rem); }
+  .hero-copy__body { margin-top: 0; }
   .hero-actions { align-items: stretch; flex-direction: column; }
   .button { width: 100%; }
   .hero-object__stage { min-height: 26rem; }
