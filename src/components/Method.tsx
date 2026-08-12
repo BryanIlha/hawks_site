@@ -3,8 +3,8 @@ import { revealSection, useGSAP } from "../lib/gsap";
 
 const steps = [
   ["01", "Leitura", "Encontramos onde a decisão trava, o dado se perde e a rotina pede clareza."],
-  ["02", "Construção", "Pipelines, modelos e interfaces feitos sob medida para o contexto que importa."],
-  ["03", "Operação", "Monitoramento, versionamento e responsabilidade pelo que precisa rodar em produção."],
+  ["02", "Construção", "Pipelines, modelos e interfaces sob medida para o contexto que importa."],
+  ["03", "Operação", "Monitoramento, versionamento e responsabilidade pelo que entra em produção."],
 ] as const;
 
 export function Method() {
@@ -21,7 +21,7 @@ export function Method() {
         </div>
         <div className="method-main">
           <h2 data-reveal>Dado bruto.<br /><em>Decisão clara.</em></h2>
-          <p className="method-lede" data-reveal>Organizamos dados, construímos tecnologia e automatizamos o que precisa rodar.</p>
+          <p className="method-lede" data-reveal>Lemos o contexto, construímos a camada certa e cuidamos do que precisa rodar em produção.</p>
           <div className="method-steps">
             {steps.map(([number, title, description]) => (
               <div className="method-step" key={number} data-reveal>

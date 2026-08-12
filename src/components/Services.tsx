@@ -1,31 +1,32 @@
 import { useRef } from "react";
 import { revealSection, useGSAP } from "../lib/gsap";
+import { ArrowIcon } from "./ArrowIcon";
 
 const services = [
   {
     id: "dados",
     number: "01",
     label: "Dados",
-    subtitle: "Fluxos de dados",
-    description: "Dados organizados para decisões claras.",
-    bullets: ["Pipelines", "Data warehouse", "Modelagem semântica"],
+    subtitle: "Base para decidir",
+    description: "Dados confiáveis para enxergar o que está acontecendo e decidir sem adivinhação.",
+    bullets: ["Dados confiáveis", "Visão unificada", "Indicadores acionáveis"],
     accent: "cream",
   },
   {
     id: "automacao",
     number: "02",
     label: "Automação",
-    subtitle: "Automações & fluxos",
-    description: "Automações que conectam sistemas e fazem a operação avançar.",
-    bullets: ["Integrações", "Fluxos operacionais", "Agentes"],
+    subtitle: "Rotinas que avançam",
+    description: "Fluxos que tiram o trabalho repetitivo do caminho e conectam quem precisa agir.",
+    bullets: ["Integrações", "Tarefas automáticas", "Agentes com contexto"],
     accent: "orange",
   },
   {
     id: "tecnologia",
     number: "03",
     label: "Tecnologia",
-    subtitle: "Softwares & integrações",
-    description: "Softwares sob medida para a operação que você precisa escalar.",
+    subtitle: "Sistemas que encaixam",
+    description: "Sistemas sob medida para a rotina que sua operação não resolve com ferramenta pronta.",
     bullets: ["Sistemas internos", "Integrações", "Produtos digitais"],
     accent: "signal",
   },
@@ -40,7 +41,7 @@ export function Services() {
     <section ref={sectionRef} id="servicos" className="services-section section-light">
       <div className="section-frame services-heading">
         <p className="eyebrow eyebrow-dark" data-reveal><span className="eyebrow-mark" />O que fazemos</p>
-        <h2 data-reveal>Três frentes.<br />Um único objetivo:<br /><em>operar com evidência.</em></h2>
+        <h2 data-reveal>Três frentes.<br />Um objetivo:<br /><em>decidir com evidência.</em></h2>
       </div>
 
       <div className="service-rail section-frame">
@@ -55,7 +56,7 @@ export function Services() {
             <ul>
               {service.bullets.map((bullet) => <li key={bullet}><i aria-hidden="true" />{bullet}</li>)}
             </ul>
-            <a href="#contato" className="service-card__link">Discutir escopo <span aria-hidden="true">↗</span></a>
+            <a href="#contato" className="service-card__link">Falar sobre esta frente <ArrowIcon /></a>
           </article>
         ))}
       </div>

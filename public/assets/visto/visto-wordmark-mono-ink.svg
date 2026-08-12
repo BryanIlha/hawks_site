@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" role="img" aria-labelledby="title desc">
+  <title id="title">Visto — wordmark K1 monocromático escuro</title>
+  <desc id="desc">Wordmark Visto inteiro em preto.</desc>
+  <path fill="#080808" d="M18 39h12l41 49 41-67h14L80 97H65L18 39Z"/>
+  <polygon fill="#080808" points="72,80 81,89 72,98 63,89"/>
+  <path d="M81 89H337" fill="none" stroke="#080808" stroke-width="2"/>
+  <path fill="#080808" d="M130 50h6v41h-6z"/>
+  <path d="M211 51h-29c-7 0-11 4-11 10 0 6 4 9 11 11l19 5c7 2 11 6 11 12 0 7-5 11-13 11h-28M226 53h48M250 53v38" fill="none" stroke="#080808" stroke-width="6" stroke-linecap="butt" stroke-linejoin="miter"/>
+  <ellipse cx="313" cy="72" rx="25" ry="20" fill="none" stroke="#080808" stroke-width="6"/>
+</svg>

@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
 import * as THREE from "three";
-import { FRONT_STATES, resolveFrontProgress, type FrontId } from "../lib/fronts";
+import { FRONT_STATES, type FrontId, type FrontRotation } from "../lib/fronts";
 
 export type HawksCubeHandle = {
   setProgress: (progress: number) => void;
@@ -41,6 +41,12 @@ function makeFaceTexture(label: string, accent: string) {
   texture.needsUpdate = true;
   return texture;
 }
+
+function quaternionFrom(rotation: FrontRotation) {
+  return new THREE.Quaternion().setFromEuler(new THREE.Euler(...rotation));
+}
+
+const clamp = (value: number) => Math.min(1, Math.max(0, value));
 
 function makeCellMaterial(index: number, textureLoader: THREE.TextureLoader) {
   const palette = [0x0a0a0a, 0x111210, 0x191816, 0x0d0e0e, 0x151514];
@@ -159,7 +165,21 @@ export const HawksCube = forwardRef(function HawksCube(
       addLabeledFace(cube, "Tecnologia", "#f4a064", new THREE.Vector3(1.61, 0, 0), new THREE.Euler(0, Math.PI / 2, 0)),
     ];
 
-    const targetRotation = FRONT_STATES[0].rotation.clone();
+    const frontRotations = new Map(FRONT_STATES.map((front) => [front.id, quaternionFrom(front.rotation)]));
+    const resolveFrontRotation = (progressValue: number) => {
+      const progress = clamp(progressValue);
+      const scaled = progress * (FRONT_STATES.length - 1);
+      const fromIndex = Math.min(FRONT_STATES.length - 2, Math.floor(scaled));
+      const transition = scaled - fromIndex;
+      const from = FRONT_STATES[fromIndex];
+      const to = FRONT_STATES[Math.min(fromIndex + 1, FRONT_STATES.length - 1)];
+
+      return {
+        active: transition > 0.53 ? to : from,
+        rotation: frontRotations.get(from.id)!.clone().slerp(frontRotations.get(to.id)!, transition),
+      };
+    };
+    const targetRotation = frontRotations.get(FRONT_STATES[0].id)!.clone();
     const currentRotation = targetRotation.clone();
     let currentFront: FrontId = "dados";
     let visible = true;
@@ -184,14 +204,14 @@ export const HawksCube = forwardRef(function HawksCube(
     const setFront = (front: FrontId) => {
       const next = FRONT_STATES.find((candidate) => candidate.id === front);
       if (!next) return;
-      targetRotation.copy(next.rotation);
+      targetRotation.copy(frontRotations.get(next.id)!);
       reportFront(front);
       if (reducedMotion) renderStatic();
       else startRender();
     };
 
     const setProgress = (progress: number) => {
-      const resolved = resolveFrontProgress(progress);
+      const resolved = resolveFrontRotation(progress);
       targetRotation.copy(resolved.rotation);
       reportFront(resolved.active.id);
       if (reducedMotion) renderStatic();

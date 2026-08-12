@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { logoWordmark } from "../lib/brandAssets";
 import { gsap, useGSAP } from "../lib/gsap";
 import { usePrefersReducedMotion } from "../lib/useReducedMotion";
+import { ArrowIcon } from "./ArrowIcon";
 
 const links = [
-  ["Frentes", "#servicos"],
+  ["Serviços", "#servicos"],
+  ["Soluções", "#solucoes"],
   ["Método", "#metodo"],
   ["Contato", "#contato"],
 ] as const;
@@ -64,6 +66,7 @@ export function Header() {
 
   return (
     <header ref={headerRef} className="site-header">
+      <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
       <div className="nav-island">
         <a className="nav-brand" href="#top" onClick={close} aria-label="HAWKS BI — início">
           <img src={logoWordmark} alt="HAWKS BI" width="2111" height="745" />
@@ -78,8 +81,8 @@ export function Header() {
         </nav>
 
         <a className="nav-cta" href="#contato" onClick={close}>
-          <span>Entre em contato.</span>
-          <span className="arrow-capsule" aria-hidden="true">↗</span>
+          <span>Falar sobre a operação.</span>
+          <span className="arrow-capsule"><ArrowIcon /></span>
         </a>
 
         <button
@@ -120,7 +123,7 @@ export function Header() {
           ))}
         </nav>
         <a className="mobile-menu__cta" href="#contato" onClick={close} data-menu-item tabIndex={open ? 0 : -1}>
-          Entre em contato. <span aria-hidden="true">↗</span>
+          Falar sobre a operação. <ArrowIcon />
         </a>
       </div>
     </header>

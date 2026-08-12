@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+  <title id="title">Visto — símbolo J3</title>
+  <desc id="desc">V laranja em forma de check, losango de articulação e eixo de sinal laranja.</desc>
+  <path fill="#F2610A" d="M20 48h12l32 40 39-62h13L72 99H60L20 48Z"/>
+  <polygon fill="#080808" points="65,82 74,91 65,100 56,91"/>
+  <path d="M74 91h66" fill="none" stroke="#F2610A" stroke-width="2"/>
+</svg>

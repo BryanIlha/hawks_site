@@ -1,8 +1,10 @@
-import { useCallback, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { lazy, Suspense, useCallback, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { FRONT_STATES, type FrontId } from "../lib/fronts";
 import { gsap, useGSAP } from "../lib/gsap";
 import { usePrefersReducedMotion } from "../lib/useReducedMotion";
-import { HawksCube, type HawksCubeHandle } from "./HawksCube";
+import type { HawksCubeHandle } from "./HawksCube";
+
+const HawksCube = lazy(() => import("./HawksCube").then((module) => ({ default: module.HawksCube })));
 
 export function Hero() {
   const heroRef = useRef<HTMLElement>(null);
@@ -90,22 +92,24 @@ export function Hero() {
         <div className="hero-layout section-frame">
           <div className="hero-copy">
             <div className="hero-copy__body">
-              <h1 data-hero-title>Problemas reais.<br /><em>Soluções sob medida.</em></h1>
+              <h1 data-hero-title>Quando a operação trava.<br /><em>A gente constrói o próximo passo.</em></h1>
               <p className="hero-lede" data-hero-copy>
-                Criamos sistemas para empresas que buscam mais controle e eficiência.
+                Dados, automação e tecnologia sob medida para decidir com clareza e fazer a rotina avançar.
               </p>
             </div>
             <div className="hero-actions" data-hero-actions>
               <a href="#contato" className="button button-primary">
-                <span>Entre em contato.</span><span className="arrow-capsule" aria-hidden="true">↗</span>
+                <span>Falar sobre a operação.</span><span className="arrow-capsule" aria-hidden="true">↗</span>
               </a>
-              <a href="#servicos" className="text-link">Ver as três frentes <span aria-hidden="true">↘</span></a>
+              <a href="#servicos" className="text-link">Ver o que fazemos <span aria-hidden="true">↘</span></a>
             </div>
           </div>
 
           <div className="hero-object" data-hero-object aria-label={`Frente ativa: ${active.label}`}>
             <div className="hero-object__stage">
-              <HawksCube ref={cubeRef} reducedMotion={reducedMotion} onFrontChange={handleFrontChange} />
+              <Suspense fallback={<div className="hawks-cube hawks-cube--loading" aria-hidden="true" />}>
+                <HawksCube ref={cubeRef} reducedMotion={reducedMotion} onFrontChange={handleFrontChange} />
+              </Suspense>
               <div className="cube-readout" aria-live="polite">
                 <span className="cube-readout__index">0{active.index + 1}</span>
                 <div>

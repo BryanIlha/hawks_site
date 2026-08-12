@@ -12,3 +12,21 @@ export const logoWordmark = brandSvg("hawks-bi-wordmark");
 
 /** Reverse wordmark for dark surfaces. */
 export const logoWordmarkReverse = brandKitSvg("hawks-bi-wordmark-reverse");
+
+/** K1 wordmark for the Visto product carousel and solution surfaces. */
+export const vistoWordmark = "/assets/visto/visto-wordmark.svg";
+
+/** Reverse K1 wordmark for dark Visto surfaces. */
+export const vistoWordmarkReverse = "/assets/visto/visto-wordmark-reverse.svg";
+
+/** Conexo L1 wordmark for light product surfaces. */
+export const conexoWordmark = "/assets/conexo/conexo-l1-wordmark-41.svg";
+
+/** Reverse Conexo L1 wordmark for dark product surfaces. */
+export const conexoWordmarkReverse = "/assets/conexo/conexo-l1-wordmark-41-reverse.svg";
+
+/** J3 compact mark for small Visto placements. */
+export const vistoMark = "/assets/visto/visto_icon.svg";
+
+/** Approved standalone Visto icon supplied for favicon and compact placements. */
+export const vistoIcon = "/assets/visto/visto_icon.svg";

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 320" role="img" aria-labelledby="title desc">
+  <title id="title">Wordmark 41 — CONEXO</title>
+  <desc id="desc">Wordmark CONEXO com C laranja, letras pretas e linha horizontal laranja atravessando o conjunto.</desc>
+
+  <!-- Letras geométricas, sem dependência de fontes externas. -->
+  <g fill="none" stroke-linecap="butt" stroke-linejoin="miter">
+    <!-- C -->
+    <path d="M 212.45 105.13 A 84 84 0 1 0 212.45 214.87" stroke="#FF5A00" stroke-width="24"/>
+
+    <!-- O -->
+    <ellipse cx="355" cy="160" rx="72" ry="84" stroke="#101010" stroke-width="25"/>
+  </g>
+
+  <!-- N -->
+  <path d="M 470 244 V 76 H 494 L 596 196 V 76 H 620 V 244 H 596 L 494 124 V 244 Z" fill="#101010"/>
+
+  <!-- E -->
+  <path d="M 665 76 H 800 V 101 H 693 V 147 H 785 V 172 H 693 V 219 H 800 V 244 H 665 Z" fill="#101010"/>
+
+  <!-- X -->
+  <g fill="none" stroke="#101010" stroke-width="24" stroke-linecap="butt">
+    <path d="M 835 76 L 985 244"/>
+    <path d="M 985 76 L 835 244"/>
+  </g>
+
+  <!-- O -->
+  <ellipse cx="1095" cy="160" rx="78" ry="84" fill="none" stroke="#101010" stroke-width="25"/>
+
+  <!-- Linha de construção/assinatura, sobreposta às letras como na referência. -->
+  <path d="M 150 160 H 1360" fill="none" stroke="#FF5A00" stroke-width="3" stroke-linecap="butt"/>
+  <rect x="900" y="150" width="20" height="20" fill="#FF5A00" transform="rotate(45 910 160)"/>
+</svg>
