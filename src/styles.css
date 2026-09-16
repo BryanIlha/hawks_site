@@ -377,8 +377,7 @@ h1 em, h2 em { color: var(--orange); font-style: normal; }
 .contact-details { align-self: end; padding-top: 2rem; border-top: 1px solid rgba(10, 10, 10, 0.28); }
 .contact-line { display: flex; align-items: baseline; justify-content: space-between; gap: 2rem; padding: 1.45rem 0; border-bottom: 1px solid rgba(10, 10, 10, 0.28); }
 .contact-line span { color: rgba(10, 10, 10, 0.62); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
-.contact-line a, .contact-line strong, .contact-line address { font-size: 1.05rem; font-weight: 700; }
-.contact-line address { font-style: normal; text-align: right; }
+.contact-line a, .contact-line strong { font-size: 1.05rem; font-weight: 700; }
 .contact-line a { overflow-wrap: anywhere; transition: color 220ms var(--ease-out); }
 .contact-line a:hover { color: var(--paper); }
 .contact-details .button { margin-top: 2rem; }
@@ -436,7 +435,6 @@ h1 em, h2 em { color: var(--orange); font-style: normal; }
   .method-main { border-left: 0; padding-left: 0; }
   .method-lede { margin-bottom: 4rem; }
   .contact-copy h2 { margin-top: 3rem; }
-  .contact-line address { text-align: left; }
   .footer-layout { grid-template-columns: 1fr; gap: 1.5rem; }
   .footer-services { justify-content: flex-start; flex-wrap: wrap; gap: 0.8rem 1.2rem; }
 }

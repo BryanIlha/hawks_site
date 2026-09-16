@@ -21,10 +21,6 @@ export function Contact() {
         <div className="contact-details" data-reveal>
           <div className="contact-line"><span>E-mail</span><a href={contactMailto}>{contactEmail}</a></div>
           <div className="contact-line"><span>Telefone</span><a href="tel:+5551995614866">55 51995614866</a></div>
-          <div className="contact-line">
-            <span>Endereço</span>
-            <address>Rua Bernardo Joaquim Ferreira, 1780<br />Parque dos Anjos<br />Gravataí - RS, 94190-000</address>
-          </div>
           <a href={contactMailto} className="button button-dark">
             <span>Falar sobre a operação.</span><span className="arrow-capsule"><ArrowIcon /></span>
           </a>
