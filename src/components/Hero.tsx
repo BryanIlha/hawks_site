@@ -30,11 +30,11 @@ export function Hero() {
       const intro = gsap.timeline({ defaults: { ease: "power4.out" } });
       if (shouldAnimate) {
         intro
-          .from("[data-hero-brand]", { autoAlpha: 0, y: 14, scale: 0.96, duration: 0.55 })
-          .from("[data-hero-title]", { autoAlpha: 0, y: 52, duration: 0.92 }, "<0.08")
-          .from("[data-hero-copy]", { autoAlpha: 0, y: 22, duration: 0.72 }, "<0.18")
-          .from("[data-hero-actions]", { autoAlpha: 0, y: 18, duration: 0.62 }, "<0.12")
-          .from("[data-hero-object]", { autoAlpha: 0, scale: 0.92, duration: 1.1 }, "<0.06");
+          .from("[data-hero-brand]", { y: 14, scale: 0.96, duration: 0.55 })
+          .from("[data-hero-title]", { y: 52, duration: 0.92 }, "<0.08")
+          .from("[data-hero-copy]", { y: 22, duration: 0.72 }, "<0.18")
+          .from("[data-hero-actions]", { y: 18, duration: 0.62 }, "<0.12")
+          .from("[data-hero-object]", { scale: 0.92, duration: 1.1 }, "<0.06");
       }
 
       if (!conditions.desktop || !shouldAnimate || !stickyRef.current || !heroRef.current) return;

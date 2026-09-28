@@ -15,9 +15,9 @@ export function Contact() {
           <p>Uma conversa objetiva sobre onde a decisão trava, o dado se perde e o que pode começar a operar melhor agora.</p>
         </div>
         <div className="contact-details" data-reveal>
-          <div className="contact-line"><span>E-mail</span><a href="mailto:contato@hawksbi.com">contato@hawksbi.com</a></div>
+          <div className="contact-line"><span>E-mail</span><a href="mailto:contato@hawksbi.com.br">contato@hawksbi.com.br</a></div>
           <div className="contact-line"><span>Base</span><strong>São Paulo · Brasil</strong></div>
-          <a href="mailto:contato@hawksbi.com" className="button button-dark">
+          <a href="mailto:contato@hawksbi.com.br" className="button button-dark">
             <span>Entre em contato.</span><span className="arrow-capsule" aria-hidden="true">↗</span>
           </a>
         </div>

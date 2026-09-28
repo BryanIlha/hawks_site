@@ -2,6 +2,7 @@ import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
 import { Proof } from "./components/Proof";
 import { Services } from "./components/Services";
+import { Products } from "./components/Products";
 import { Method } from "./components/Method";
 import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
@@ -15,6 +16,7 @@ export default function App() {
         <Hero />
         <Proof />
         <Services />
+        <Products />
         <Method />
         <Contact />
       </main>

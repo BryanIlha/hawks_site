@@ -5,6 +5,7 @@ import { usePrefersReducedMotion } from "../lib/useReducedMotion";
 
 const links = [
   ["Frentes", "#servicos"],
+  ["Ferramentas", "#ferramentas"],
   ["Método", "#metodo"],
   ["Contato", "#contato"],
 ] as const;
