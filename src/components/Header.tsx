@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { logoWordmark } from "../lib/brandAssets";
-import { gsap, useGSAP } from "../lib/gsap";
+import { BrandLogo } from "./BrandLogo";
+import { gsap, useGSAP } from "../lib/gsapCore";
 import { usePrefersReducedMotion } from "../lib/useReducedMotion";
-import { ArrowIcon } from "./ArrowIcon";
 
 const links = [
-  ["Serviços", "#servicos"],
-  ["Soluções", "#solucoes"],
-  ["Método", "#metodo"],
-  ["Contato", "#contato"],
+  ["Frentes", "/#servicos"],
+  ["Produtos", "/produtos/"],
+  ["Método", "/#metodo"],
+  ["Blog", "/blog/"],
 ] as const;
 
 export function Header() {
@@ -58,18 +57,17 @@ export function Header() {
 
     const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
     timeline
-      .fromTo(menu, { autoAlpha: 0, y: -18 }, { autoAlpha: 1, y: 0, duration: 0.42 })
-      .fromTo(items, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.46, stagger: 0.07 }, "<0.12");
+      .fromTo(menu, { opacity: 0.6, y: -10 }, { autoAlpha: 1, y: 0, duration: 0.42 })
+      .fromTo(items, { autoAlpha: 1, y: 10 }, { y: 0, duration: 0.46, stagger: 0.04 }, "<");
 
     return () => timeline.kill();
   }, { scope: headerRef, dependencies: [open, reducedMotion], revertOnUpdate: true });
 
   return (
     <header ref={headerRef} className="site-header">
-      <a className="skip-link" href="#conteudo">Pular para o conteúdo</a>
       <div className="nav-island">
-        <a className="nav-brand" href="#top" onClick={close} aria-label="HAWKS BI — início">
-          <img src={logoWordmark} alt="HAWKS BI" width="2111" height="745" />
+        <a className="nav-brand" href="/#top" onClick={close} aria-label="HAWKS BI — início">
+          <BrandLogo light />
         </a>
 
         <nav className="nav-links" aria-label="Navegação principal">
@@ -80,9 +78,9 @@ export function Header() {
           ))}
         </nav>
 
-        <a className="nav-cta" href="#contato" onClick={close}>
-          <span>Falar sobre a operação.</span>
-          <span className="arrow-capsule"><ArrowIcon /></span>
+        <a className="nav-cta" href="/#contato" onClick={close}>
+          <span>Entre em contato.</span>
+          <span className="arrow-capsule" aria-hidden="true">↗</span>
         </a>
 
         <button
@@ -122,8 +120,8 @@ export function Header() {
             </a>
           ))}
         </nav>
-        <a className="mobile-menu__cta" href="#contato" onClick={close} data-menu-item tabIndex={open ? 0 : -1}>
-          Falar sobre a operação. <ArrowIcon />
+        <a className="mobile-menu__cta" href="/#contato" onClick={close} data-menu-item tabIndex={open ? 0 : -1}>
+          Entre em contato. <span aria-hidden="true">↗</span>
         </a>
       </div>
     </header>

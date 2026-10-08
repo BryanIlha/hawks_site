@@ -7,6 +7,7 @@ const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   plugins: [react()],
+  build: { manifest: true },
   resolve: {
     alias: {
       "@": path.resolve(projectRoot, "./src"),

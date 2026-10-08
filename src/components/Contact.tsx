@@ -1,9 +1,5 @@
 import { useRef } from "react";
 import { revealSection, useGSAP } from "../lib/gsap";
-import { ArrowIcon } from "./ArrowIcon";
-
-const contactEmail = "contato@hawksbi.com.br";
-const contactMailto = `mailto:${contactEmail}?subject=${encodeURIComponent("Contato pelo site HAWKS BI")}`;
 
 export function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -16,13 +12,13 @@ export function Contact() {
         <div className="contact-copy" data-reveal>
           <p className="eyebrow eyebrow-dark"><span className="eyebrow-mark" />Próximo passo</p>
           <h2>Entre em<br /><em>contato.</em></h2>
-          <p>Conte onde a operação trava. A gente ajuda a encontrar o próximo passo.</p>
+          <p>Atendimento presencial em Gravataí para conversar sobre software e automações. Conte onde o trabalho trava e o que sua equipe precisa conectar.</p>
         </div>
         <div className="contact-details" data-reveal>
-          <div className="contact-line"><span>E-mail</span><a href={contactMailto}>{contactEmail}</a></div>
-          <div className="contact-line"><span>Telefone</span><a href="tel:+5551995614866">55 51995614866</a></div>
-          <a href={contactMailto} className="button button-dark">
-            <span>Falar sobre a operação.</span><span className="arrow-capsule"><ArrowIcon /></span>
+          <div className="contact-line"><span>E-mail</span><a href="mailto:contato@hawksbi.com.br">contato@hawksbi.com.br</a></div>
+          <div className="contact-line"><span>Base</span><strong>Gravataí · RS · Brasil</strong></div>
+          <a href="mailto:contato@hawksbi.com.br" className="button button-dark">
+            <span>Entre em contato.</span><span className="arrow-capsule" aria-hidden="true">↗</span>
           </a>
         </div>
       </div>

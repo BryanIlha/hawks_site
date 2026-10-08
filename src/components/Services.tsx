@@ -1,34 +1,33 @@
 import { useRef } from "react";
 import { revealSection, useGSAP } from "../lib/gsap";
-import { ArrowIcon } from "./ArrowIcon";
 
 const services = [
   {
     id: "dados",
     number: "01",
     label: "Dados",
-    subtitle: "Base para decidir",
-    description: "Dados confiáveis para enxergar o que está acontecendo e decidir sem adivinhação.",
-    bullets: ["Dados confiáveis", "Visão unificada", "Indicadores acionáveis"],
+    subtitle: "Business intelligence",
+    description: "Uma camada confiável para entender o que acontece antes de decidir o próximo movimento.",
+    bullets: ["Data warehouse", "Modelagem semântica", "Decisão executiva"],
     accent: "cream",
   },
   {
-    id: "automacao",
+    id: "inteligencia",
     number: "02",
-    label: "Automação",
-    subtitle: "Rotinas que avançam",
-    description: "Fluxos que tiram o trabalho repetitivo do caminho e conectam quem precisa agir.",
-    bullets: ["Integrações", "Tarefas automáticas", "Agentes com contexto"],
-    accent: "orange",
+    label: "Inteligência",
+    subtitle: "Machine learning",
+    description: "Modelos preditivos treinados no contexto real da operação — não em um benchmark distante.",
+    bullets: ["Forecasting", "Recomendação", "Detecção de anomalia"],
+    accent: "signal",
   },
   {
-    id: "tecnologia",
+    id: "automacao",
     number: "03",
-    label: "Tecnologia",
-    subtitle: "Sistemas que encaixam",
-    description: "Sistemas sob medida para a rotina que sua operação não resolve com ferramenta pronta.",
-    bullets: ["Sistemas internos", "Integrações", "Produtos digitais"],
-    accent: "signal",
+    label: "Automação",
+    subtitle: "Agentes & fluxos",
+    description: "Software sob medida, integrações e automação de processos para conectar seus sistemas e executar rotinas operacionais.",
+    bullets: ["WhatsApp & CRM", "RPA & integrações", "Agentes com LLM"],
+    accent: "orange",
   },
 ] as const;
 
@@ -40,8 +39,8 @@ export function Services() {
   return (
     <section ref={sectionRef} id="servicos" className="services-section section-light">
       <div className="section-frame services-heading">
-        <p className="eyebrow eyebrow-dark" data-reveal><span className="eyebrow-mark" />O que fazemos</p>
-        <h2 data-reveal>Três frentes.<br />Um objetivo:<br /><em>decidir com evidência.</em></h2>
+        <h2 data-reveal>Três frentes.<br /><em>Um único objetivo.</em></h2>
+        <p data-reveal>Software sob medida e automação de processos, apoiados por dados confiáveis e modelos treinados no contexto do seu negócio.</p>
       </div>
 
       <div className="service-rail section-frame">
@@ -56,10 +55,11 @@ export function Services() {
             <ul>
               {service.bullets.map((bullet) => <li key={bullet}><i aria-hidden="true" />{bullet}</li>)}
             </ul>
-            <a href="#contato" className="service-card__link">Falar sobre esta frente <ArrowIcon /></a>
+            <a href="#contato" className="service-card__link">Discutir escopo <span aria-hidden="true">↗</span></a>
           </article>
         ))}
       </div>
+      <div className="service-paths section-frame"><p>Da rotina ao projeto.</p><nav aria-label="Conheça nossos serviços"><a href="/servicos/software-sob-medida/">Software sob medida em Gravataí <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg></a><a href="/servicos/automacao-de-processos/">Automação de processos em Gravataí <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg></a></nav></div>
     </section>
   );
 }

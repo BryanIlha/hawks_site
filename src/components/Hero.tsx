@@ -1,145 +1,119 @@
-import { lazy, Suspense, useCallback, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { FRONT_STATES, type FrontId } from "../lib/fronts";
-import { gsap, useGSAP } from "../lib/gsap";
 import { usePrefersReducedMotion } from "../lib/useReducedMotion";
 import type { HawksCubeHandle } from "./HawksCube";
 
-const HawksCube = lazy(() => import("./HawksCube").then((module) => ({ default: module.HawksCube })));
-
 export function Hero() {
-  const heroRef = useRef<HTMLElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
   const cubeRef = useRef<HawksCubeHandle>(null);
+  const [Cube, setCube] = useState<typeof import("./HawksCube").HawksCube | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    const frame = requestAnimationFrame(() => {
+      void import("./HawksCube").then(({ HawksCube }) => {
+        if (mounted) setCube(() => HawksCube);
+      }).catch(() => { /* The static representation and all page content remain usable. */ });
+    });
+    return () => { mounted = false; cancelAnimationFrame(frame); };
+  }, []);
+  const selectorRef = useRef<HTMLDivElement>(null);
   const reducedMotion = usePrefersReducedMotion();
   const [activeFront, setActiveFront] = useState<FrontId>("dados");
+  const [expanded, setExpanded] = useState(false);
+  const [motionPaused, setMotionPaused] = useState(false);
   const active = FRONT_STATES.find((front) => front.id === activeFront) ?? FRONT_STATES[0];
-
   const handleFrontChange = useCallback((front: FrontId) => setActiveFront(front), []);
 
   const selectFront = (front: (typeof FRONT_STATES)[number]) => {
     setActiveFront(front.id);
     cubeRef.current?.setFront(front.id);
   };
-
-  const handleFrontKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>, index: number) => {
-    const direction = event.key === "ArrowRight" || event.key === "ArrowDown" ? 1 : event.key === "ArrowLeft" || event.key === "ArrowUp" ? -1 : 0;
-    if (!direction && event.key !== "Home" && event.key !== "End") return;
-
+  const navigateFronts = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let next = index;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % FRONT_STATES.length;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index + FRONT_STATES.length - 1) % FRONT_STATES.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = FRONT_STATES.length - 1;
+    else return;
     event.preventDefault();
-    const nextIndex = event.key === "Home"
-      ? 0
-      : event.key === "End"
-        ? FRONT_STATES.length - 1
-        : (index + direction + FRONT_STATES.length) % FRONT_STATES.length;
-    const nextFront = FRONT_STATES[nextIndex];
-    selectFront(nextFront);
-    requestAnimationFrame(() => document.getElementById(`front-selector-${nextFront.id}`)?.focus());
+    selectFront(FRONT_STATES[next]);
+    selectorRef.current?.querySelectorAll<HTMLButtonElement>("button")[next].focus();
   };
 
-  useGSAP(() => {
-    const media = gsap.matchMedia();
-
-    media.add({ desktop: "(min-width: 900px)", reduced: "(prefers-reduced-motion: reduce)" }, (context) => {
-      const conditions = context.conditions as { desktop?: boolean; reduced?: boolean };
-      const shouldAnimate = !conditions.reduced && !reducedMotion;
-
-      const intro = gsap.timeline({ defaults: { ease: "power4.out" } });
-      if (shouldAnimate) {
-        intro
-          .from("[data-hero-title]", { autoAlpha: 0, y: 42, duration: 0.92 })
-          .from("[data-hero-copy]", { autoAlpha: 0, y: 22, duration: 0.72 }, "<0.18")
-          .from("[data-hero-actions]", { autoAlpha: 0, y: 18, duration: 0.62 }, "<0.12")
-          .from("[data-hero-object]", { autoAlpha: 0, scale: 0.92, duration: 1.1 }, "<0.06");
-      }
-
-      if (!conditions.desktop || !shouldAnimate || !stickyRef.current || !heroRef.current) return;
-
-      const playhead = { value: 0 };
-      const scrollTimeline = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-          id: "hawks-hero-fronts",
-          trigger: heroRef.current,
-          pin: stickyRef.current,
-          start: "top top",
-          end: () => `+=${Math.max(1300, window.innerHeight * 1.75)}`,
-          scrub: 0.45,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          snap: {
-            snapTo: [0, 0.5, 1],
-            delay: 0.08,
-            duration: { min: 0.12, max: 0.3 },
-            ease: "power3.out",
-          },
-        },
-      });
-
-      scrollTimeline.to(playhead, {
-        value: 1,
-        duration: 1,
-        onUpdate: () => cubeRef.current?.setProgress(playhead.value),
-      });
-      return undefined;
-    });
-
-    return () => media.revert();
-  }, { scope: heroRef, dependencies: [reducedMotion], revertOnUpdate: true });
-
   return (
-    <section ref={heroRef} id="top" className="hero-section">
-      <div ref={stickyRef} className="hero-sticky">
+    <section id="top" className="hero-section">
+      <div className="hero-sticky">
         <div className="hero-layout section-frame">
           <div className="hero-copy">
             <div className="hero-copy__body">
-              <h1 data-hero-title>Quando a operação trava.<br /><em>A gente constrói o próximo passo.</em></h1>
-              <p className="hero-lede" data-hero-copy>
-                Dados, automação e tecnologia sob medida para decidir com clareza e fazer a rotina avançar.
+              <h1>Três frentes.<br /><em>Um sistema.</em></h1>
+              <p className="hero-lede">
+                Software sob medida e automação de processos em Gravataí. Conectamos dados, sistemas e decisões à rotina da sua operação.
               </p>
-            </div>
-            <div className="hero-actions" data-hero-actions>
-              <a href="#contato" className="button button-primary">
-                <span>Falar sobre a operação.</span><span className="arrow-capsule" aria-hidden="true">↗</span>
-              </a>
-              <a href="#servicos" className="text-link">Ver o que fazemos <span aria-hidden="true">↘</span></a>
             </div>
           </div>
 
-          <div className="hero-object" data-hero-object aria-label={`Frente ativa: ${active.label}`}>
+          <div className="hero-actions">
+            <a href="#contato" className="button button-primary">
+              <span>Entre em contato.</span><span className="arrow-capsule" aria-hidden="true">↗</span>
+            </a>
+            <a href="#ferramentas" className="text-link">Veja na prática <span aria-hidden="true">↘</span></a>
+          </div>
+
+          <div className="hero-object">
             <div className="hero-object__stage">
-              <Suspense fallback={<div className="hawks-cube hawks-cube--loading" aria-hidden="true" />}>
-                <HawksCube ref={cubeRef} reducedMotion={reducedMotion} onFrontChange={handleFrontChange} />
-              </Suspense>
-              <div className="cube-readout" aria-live="polite">
-                <span className="cube-readout__index">0{active.index + 1}</span>
-                <div>
-                  <strong>{active.label}</strong>
-                  <small>{active.kicker}</small>
-                  <span className="cube-readout__detail">{active.detail}</span>
+              {Cube ? <Cube ref={cubeRef} front={activeFront} reducedMotion={reducedMotion} expanded={expanded} motionPaused={motionPaused} onFrontChange={handleFrontChange} /> : (
+                <div className="hawks-cube cube-placeholder" role="img" aria-label="Dados, Inteligência e Automação: as três faces da HAWKS BI">
+                  <svg viewBox="0 0 240 240" fill="none" aria-hidden="true">
+                    <path d="m120 28 82 47v94l-82 47-82-47V75Z" fill="#11110f" stroke="#484035" />
+                    <path d="m38 75 82 47 82-47M120 122v94M79 51l82 47v94M161 51 79 98v94M38 122l82 47 82-47" stroke="#302b24" />
+                  </svg>
                 </div>
-              </div>
+              )}
             </div>
-            <div className="front-selector" role="radiogroup" aria-label="Frentes HAWKS BI">
+            <div className="cube-readout" aria-live="polite" aria-atomic="true">
+              <span className="cube-readout__index">0{active.index + 1}</span>
+              <div>
+                <strong>{active.label}</strong>
+                <small>{active.kicker}</small>
+              </div>
+              <span className="cube-readout__detail">{active.detail}</span>
+            </div>
+            <div ref={selectorRef} className="front-selector" role="radiogroup" aria-label="Frentes HAWKS BI">
               {FRONT_STATES.map((front, index) => (
                 <button
                   type="button"
                   key={front.id}
-                  id={`front-selector-${front.id}`}
                   className={front.id === active.id ? "is-active" : ""}
                   role="radio"
                   aria-checked={front.id === active.id}
                   tabIndex={front.id === active.id ? 0 : -1}
-                  onKeyDown={(event) => handleFrontKeyDown(event, index)}
                   onClick={() => selectFront(front)}
+                  onKeyDown={(event) => navigateFronts(event, index)}
                 >
                   <span>0{index + 1}</span>{front.label}
                 </button>
               ))}
             </div>
-            <p className="front-selector-note">Toque para explorar cada frente</p>
+            <div className="hero-object__toolbar">
+              <span className="cube-instruction cube-instruction--mouse">Passe o mouse nas peças · arraste para girar</span>
+              <span className="cube-instruction cube-instruction--touch">Toque nas frentes ou deslize para girar</span>
+              <div className="cube-toolbar__actions">
+              <button className="cube-expand" type="button" aria-pressed={expanded} onClick={() => setExpanded((value) => !value)}>
+                <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
+                  {expanded ? <path d="M2 7h5V2m11 11h-5v5M7 7 2 2m11 11 5 5" /> : <path d="M7 2H2v5m11 11h5v-5M2 2l5 5m11 11-5-5" />}
+                </svg>
+                {expanded ? "Fechar prévia" : "Explorar peças"}
+              </button>
+              {!reducedMotion && <button className="cube-expand cube-motion" type="button" aria-label="Pausar movimento automático" title={motionPaused ? "Retomar movimento automático" : "Pausar movimento automático"} aria-pressed={motionPaused} onClick={() => setMotionPaused((value) => !value)}>
+                <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
+                  {motionPaused ? <path d="m7 4 9 6-9 6Z" /> : <path d="M6 4v12M14 4v12" />}
+                </svg>
+              </button>}
+              </div>
+            </div>
           </div>
+
         </div>
-        <div className="hero-scroll-note"><span className="scroll-line" />Role para revelar o sistema</div>
       </div>
     </section>
   );

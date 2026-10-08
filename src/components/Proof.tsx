@@ -1,33 +1,27 @@
-import { useRef } from "react";
-import { revealSection, useGSAP } from "../lib/gsap";
-
-const proofPoints = [
-  ["CONTEXTO", "Começamos pela decisão que precisa de clareza."],
-  ["MODELO", "Desenhamos a camada certa para o seu contexto, sem plataforma engessada."],
-  ["ROTINA", "Levamos a solução para o fluxo que sua equipe já conhece."],
-  ["ACOMPANHAMENTO", "Acompanhamos a adoção até a solução virar rotina."],
-] as const;
+const flow = [
+  { title: "Dados", verb: "Enxergar", text: "Reunir o que está disperso e criar uma base confiável para a decisão." },
+  { title: "Inteligência", verb: "Antecipar", text: "Encontrar padrões, reconhecer riscos e entender o próximo movimento." },
+  { title: "Automação", verb: "Agir", text: "Conectar sistemas e colocar a decisão dentro da rotina da operação." },
+];
 
 export function Proof() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useGSAP(() => revealSection(sectionRef.current), { scope: sectionRef });
-
   return (
-    <section ref={sectionRef} id="resultados" className="proof-section section-dark">
-      <div className="section-frame proof-intro">
-        <p className="eyebrow" data-reveal><span className="eyebrow-mark" />O que fica depois da entrega</p>
-        <p className="proof-intro__lead" data-reveal>
-          A entrega não termina na tela. Ela vira uma operação que encontra respostas, enxerga riscos e age sem improviso.
-        </p>
-      </div>
-      <div className="proof-grid section-frame">
-        {proofPoints.map(([label, text]) => (
-          <div key={label} className="proof-point" data-reveal>
-            <span className="proof-point__label">{label}</span>
-            <p>{text}</p>
-          </div>
-        ))}
+    <section id="resultados" className="proof-section section-dark" aria-labelledby="flow-title">
+      <div className="section-frame">
+        <div className="proof-intro">
+          <h2 id="flow-title">Da evidência <em>à ação.</em></h2>
+          <p>As três frentes se conectam para que a informação continue útil depois da análise.</p>
+        </div>
+        <ol className="operation-flow">
+          {flow.map((step, index) => (
+            <li key={step.title}>
+              <div className="operation-flow__line"><span>0{index + 1}</span><i aria-hidden="true" /></div>
+              <p className="operation-flow__front">{step.title}</p>
+              <h3>{step.verb}</h3>
+              <p>{step.text}</p>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
