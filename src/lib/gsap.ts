@@ -10,7 +10,7 @@ export function revealSection(scope: HTMLElement | null) {
 
   const media = gsap.matchMedia();
 
-  media.add("(prefers-reduced-motion: no-preference)", () => {
+  media.add("(min-width: 900px) and (prefers-reduced-motion: no-preference)", () => {
     const targets = gsap.utils.toArray<HTMLElement>("[data-reveal]", scope);
     if (!targets.length) return;
 

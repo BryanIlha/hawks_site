@@ -47,6 +47,7 @@ export const HawksCube = forwardRef(function HawksCube(
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
+    const compact = window.matchMedia("(max-width: 899px)").matches;
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "default" });
@@ -55,7 +56,7 @@ export const HawksCube = forwardRef(function HawksCube(
       return;
     }
     setWebglUnavailable(false);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.matchMedia("(max-width: 899px)").matches ? 1.4 : 1.75));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, compact ? 1 : 1.5));
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.domElement.className = "hawks-cube__canvas";
@@ -159,7 +160,7 @@ export const HawksCube = forwardRef(function HawksCube(
       return { symbol, name, cell };
     });
     const faces = markings.flatMap(({ symbol, name }) => [symbol, name]);
-    const glow = createCubeGlow(renderer, scene, camera, cells, [...cornerMarks, ...faces.map(({ mesh }) => mesh)]);
+    const glow = createCubeGlow(renderer, scene, camera, cells, [...cornerMarks, ...faces.map(({ mesh }) => mesh)], compact);
     const orientations = FRONT_STATES.map((state) => ({
       ...state, rotation: new THREE.Quaternion().setFromEuler(new THREE.Euler(...state.rotation)),
     }));
@@ -184,6 +185,7 @@ export const HawksCube = forwardRef(function HawksCube(
     let contextLost = false;
     let frameId = 0;
     let lastTime = 0;
+    let lastPaint = 0;
     let hoverExitTimer: ReturnType<typeof setTimeout> | undefined;
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
@@ -210,6 +212,8 @@ export const HawksCube = forwardRef(function HawksCube(
     function render(time: number) {
       frameId = 0;
       if (disposed || contextLost || !visible || document.hidden) return;
+      if (time - lastPaint < (compact ? 1000 / 30 : 1000 / 45)) { invalidate(); return; }
+      lastPaint = time;
       const dt = lastTime ? Math.min((time - lastTime) / 1000, 0.04) : 1 / 60;
       lastTime = time;
       const manual = hovering || !!drag || pinnedOpen || keyboardActive;

@@ -8,7 +8,7 @@ import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 type GlowSource = { mesh: THREE.Mesh; surface: THREE.Material[]; mask: THREE.Material[] };
 
 /** Bloom only the exposed inner faces, with the exterior still occluding the light. */
-export function createCubeGlow(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, sources: GlowSource[], decorations: THREE.Object3D[]) {
+export function createCubeGlow(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, sources: GlowSource[], decorations: THREE.Object3D[], compact = false) {
   const glow = new EffectComposer(renderer);
   glow.setPixelRatio(1);
   glow.renderToScreen = false;
@@ -18,8 +18,8 @@ export function createCubeGlow(renderer: THREE.WebGLRenderer, scene: THREE.Scene
   glow.addPass(bloom);
 
   const final = new EffectComposer(renderer);
-  final.renderTarget1.samples = Math.min(4, renderer.capabilities.maxSamples);
-  final.renderTarget2.samples = Math.min(4, renderer.capabilities.maxSamples);
+  final.renderTarget1.samples = compact ? 0 : Math.min(2, renderer.capabilities.maxSamples);
+  final.renderTarget2.samples = compact ? 0 : Math.min(2, renderer.capabilities.maxSamples);
   const scenePass = new RenderPass(scene, camera);
   const merge = new ShaderPass({
     uniforms: {
@@ -75,7 +75,7 @@ export function createCubeGlow(renderer: THREE.WebGLRenderer, scene: THREE.Scene
     },
     resize(width: number, height: number) {
       // Soft light needs less resolution than the original textures and lettering.
-      glow.setSize(Math.max(32, Math.round(width * 0.6)), Math.max(32, Math.round(height * 0.6)));
+      glow.setSize(Math.max(32, Math.round(width * (compact ? 0.4 : 0.6))), Math.max(32, Math.round(height * (compact ? 0.4 : 0.6))));
       final.setSize(width, height);
     },
     dispose() {

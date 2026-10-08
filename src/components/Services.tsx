@@ -48,8 +48,8 @@ export function Services() {
           <article key={service.id} className={`service-card service-card--${service.accent}`} data-reveal>
             <div className="service-card__topline"><span>{service.number} / 03</span><span className="service-card__signal" /></div>
             <div className="service-card__copy">
-              <p>{service.subtitle}</p>
               <h3>{service.label}</h3>
+              <p>{service.subtitle}</p>
               <span>{service.description}</span>
             </div>
             <ul>
