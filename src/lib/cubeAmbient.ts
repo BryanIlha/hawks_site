@@ -14,8 +14,9 @@ export function ambientPose(seconds: number) {
   return {
     x: Math.sin(seconds * 0.31) * 0.018,
     y: Math.sin(seconds * 0.62) * 0.065,
-    pitch: Math.sin(seconds * 0.28) * 0.024,
-    yaw: Math.sin(seconds * 0.22) * 0.045,
-    roll: Math.sin(seconds * 0.37) * 0.012,
+    pitch: Math.sin(seconds * 0.24) * 0.06,
+    // Two slow rhythms give a gentle drift without a full turn.
+    yaw: Math.sin(seconds * 0.22) * 0.17 + Math.sin(seconds * 0.08) * 0.055,
+    roll: Math.sin(seconds * 0.27) * 0.025,
   };
 }

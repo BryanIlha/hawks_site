@@ -6,6 +6,7 @@ import { cubeCameraDistance } from "../lib/cubeFraming";
 import { ambientPose, nextPulseDelay, pulseStrength } from "../lib/cubeAmbient";
 import { advanceSpring, localInfluence } from "../lib/cubeMotion";
 import { makeCubeInscription } from "../lib/cubeInscription";
+import { createAtlasSurface, disposeAtlasSurface } from "../lib/cubeAtlas";
 
 export type HawksCubeHandle = {
   setFront: (front: FrontId) => void;
@@ -13,8 +14,35 @@ export type HawksCubeHandle = {
   setMotionPaused: (paused: boolean) => void;
 };
 
+export type CubeSurface = {
+  color: number;
+  roughness: number;
+  metalness: number;
+  map?: THREE.Texture;
+  bumpMap?: THREE.Texture;
+  bumpScale?: number;
+  roughnessMap?: THREE.Texture;
+  inscriptionColor?: number;
+  inscriptionEmission?: number;
+  envMap?: THREE.Texture;
+  envMapIntensity?: number;
+  normalMap?: THREE.Texture;
+  emissiveMap?: THREE.Texture;
+  emissive?: number;
+  emissiveIntensity?: number;
+  /** Material comparison only: map one surface across the assembled cube face. */
+  continuousSurface?: boolean;
+  neutralLighting?: boolean;
+  /** Study-only optical finishes; never changes the 27-cell geometry. */
+  /** Optional graphics attached to each exposed small-block face in a study. */
+  faceArtwork?: (kind: FrontId, column: number, row: number) => ReturnType<typeof makeCubeInscription>;
+  physical?: Pick<THREE.MeshPhysicalMaterialParameters, "clearcoat" | "clearcoatRoughness" | "transmission" | "thickness" | "ior" | "anisotropy" | "anisotropyRotation" | "sheen" | "sheenColor" | "sheenRoughness">;
+};
+
 type HawksCubeProps = {
   reducedMotion: boolean;
+  /** Optional material studies; the home retains its incumbent texture. */
+  surface?: CubeSurface;
   expanded: boolean;
   motionPaused?: boolean;
   front: FrontId;
@@ -24,8 +52,11 @@ type HawksCubeProps = {
 const CELL_SIZE = 0.94;
 const CELL_STEP = 1.03;
 const EXPANSION = 0.24;
+// Keep only a trace of warmth in the seams; interaction retains its original peak.
+const IDLE_EMISSION = 0.018;
+const IDLE_GLOW = 0.185;
 export const HawksCube = forwardRef(function HawksCube(
-  { reducedMotion, expanded, motionPaused = false, front, onFrontChange }: HawksCubeProps,
+  { reducedMotion, expanded, motionPaused = false, front, onFrontChange, surface: surfaceOverride }: HawksCubeProps,
   ref: Ref<HawksCubeHandle>,
 ) {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -56,6 +87,8 @@ export const HawksCube = forwardRef(function HawksCube(
       return;
     }
     setWebglUnavailable(false);
+    const ownedSurface = surfaceOverride ? null : createAtlasSurface();
+    const surfaceMaterial = surfaceOverride ?? ownedSurface!;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, compact ? 1 : 1.5));
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -65,10 +98,10 @@ export const HawksCube = forwardRef(function HawksCube(
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
-    const ambient = new THREE.AmbientLight(0xf5f0e7, 1.9);
-    const key = new THREE.DirectionalLight(0xf4a064, 2.05);
+    const ambient = new THREE.AmbientLight(surfaceMaterial?.neutralLighting ? 0xffffff : 0xf5f0e7, 1.9);
+    const key = new THREE.DirectionalLight(surfaceMaterial?.neutralLighting ? 0xffffff : 0xf4a064, 2.05);
     key.position.set(4, 5, 7);
-    const fill = new THREE.DirectionalLight(0xf2610a, 1.6);
+    const fill = new THREE.DirectionalLight(surfaceMaterial?.neutralLighting ? 0xffffff : 0xf2610a, 1.6);
     fill.position.set(-4, -2, 5);
     scene.add(ambient, key, fill);
 
@@ -77,6 +110,7 @@ export const HawksCube = forwardRef(function HawksCube(
     floatRig.add(cube);
     scene.add(floatRig);
     const geometry = new THREE.BoxGeometry(CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    const surfaceGeometries: THREE.BufferGeometry[] = [];
     const palette = [0x0a0a0a, 0x111210, 0x191816, 0x0d0e0e, 0x151514];
     const textureLoader = new THREE.TextureLoader();
     const cellMaterials: THREE.MeshStandardMaterial[] = [];
@@ -89,17 +123,35 @@ export const HawksCube = forwardRef(function HawksCube(
       for (let y = -1; y <= 1; y++) {
         for (let z = -1; z <= 1; z++) {
           const index = cells.length;
-          const material = new THREE.MeshStandardMaterial({
-            color: palette[index % palette.length],
-            roughness: 0.42 + (index % 3) * 0.04,
-            metalness: 0.22,
+          const Material = surfaceMaterial?.physical ? THREE.MeshPhysicalMaterial : THREE.MeshStandardMaterial;
+          const material = new Material({
+            ...surfaceMaterial?.physical,
+            color: surfaceMaterial?.color ?? palette[index % palette.length],
+            roughness: surfaceMaterial?.roughness ?? 0.42 + (index % 3) * 0.04,
+            metalness: surfaceMaterial?.metalness ?? 0.22,
+            map: surfaceMaterial?.map ?? null,
+            bumpMap: surfaceMaterial?.bumpMap ?? null,
+            bumpScale: surfaceMaterial?.bumpScale ?? 1,
+            roughnessMap: surfaceMaterial?.roughnessMap ?? null,
+            envMap: surfaceMaterial?.envMap ?? null,
+            envMapIntensity: surfaceMaterial?.envMapIntensity ?? 1,
+            normalMap: surfaceMaterial?.normalMap ?? null,
+            emissiveMap: surfaceMaterial?.emissiveMap ?? null,
+            emissive: surfaceMaterial?.emissive ?? 0x000000,
+            emissiveIntensity: surfaceMaterial?.emissiveIntensity ?? 1,
           });
           // The original outer faces stay dark; only exposed inner faces emit orange.
           const interior = material.clone();
+          interior.emissiveMap = null;
+          if (interior instanceof THREE.MeshPhysicalMaterial) {
+            interior.transmission = 0;
+            interior.clearcoat = 0;
+            interior.sheen = 0;
+          }
           interior.emissive.set(0xf2610a);
-          interior.emissiveIntensity = 0;
+          interior.emissiveIntensity = IDLE_EMISSION;
           interiorMaterials.push(interior);
-          textureLoader.load(`/assets/cube3/cube3-${String(index + 1).padStart(2, "0")}.webp`, (texture) => {
+          if (!surfaceMaterial) textureLoader.load(`/assets/cube3/cube3-${String(index + 1).padStart(2, "0")}.webp`, (texture) => {
             if (disposed) {
               texture.dispose();
               return;
@@ -118,9 +170,27 @@ export const HawksCube = forwardRef(function HawksCube(
             y === 1 ? material : interior, y === -1 ? material : interior,
             z === 1 ? material : interior, z === -1 ? material : interior,
           ];
-          const glowMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+          const glowMaterial = new THREE.MeshBasicMaterial({ color: glowColor.clone().multiplyScalar(IDLE_GLOW) });
           const mask = surface.map((face) => face === interior ? glowMaterial : glowOccluder);
-          const mesh = new THREE.Mesh(geometry, surface);
+          let cellGeometry: THREE.BufferGeometry = geometry;
+          if (surfaceMaterial?.continuousSurface) {
+            cellGeometry = geometry.clone();
+            const positions = cellGeometry.getAttribute("position");
+            const normals = cellGeometry.getAttribute("normal");
+            const uv = cellGeometry.getAttribute("uv");
+            const width = CELL_STEP * 2 + CELL_SIZE;
+            for (let vertex = 0; vertex < positions.count; vertex++) {
+              const px = positions.getX(vertex) + x * CELL_STEP;
+              const py = positions.getY(vertex) + y * CELL_STEP;
+              const pz = positions.getZ(vertex) + z * CELL_STEP;
+              const nx = normals.getX(vertex), ny = normals.getY(vertex), nz = normals.getZ(vertex);
+              const u = nx ? -nx * pz : nz ? nz * px : px;
+              const v = ny ? -ny * pz : py;
+              uv.setXY(vertex, u / width + 0.5, v / width + 0.5);
+            }
+            surfaceGeometries.push(cellGeometry);
+          }
+          const mesh = new THREE.Mesh(cellGeometry, surface);
           const grid = new THREE.Vector3(x, y, z);
           mesh.position.copy(grid).multiplyScalar(CELL_STEP);
           cells.push({ mesh, grid, direction: grid.clone().normalize(), interior, glowMaterial, surface, mask, spring: { value: 0, velocity: 0 } });
@@ -149,17 +219,50 @@ export const HawksCube = forwardRef(function HawksCube(
       { id: "inteligencia" as const, label: "Inteligência", grid: new THREE.Vector3(1, 0, 0), rotation: new THREE.Euler(0, Math.PI / 2, 0) },
       { id: "automacao" as const, label: "Automação", grid: new THREE.Vector3(0, 1, 0), rotation: new THREE.Euler(-Math.PI / 2, 0, 0) },
     ];
-    const markings = faceDefinitions.map(({ id, label, grid, rotation }) => {
+    const markings = (surfaceMaterial?.faceArtwork ? [] : faceDefinitions).map(({ id, label, grid, rotation }) => {
       const position = grid.clone().multiplyScalar(CELL_SIZE / 2 + 0.003);
       const cell = cells.find((candidate) => candidate.grid.equals(grid))!;
       const below = grid.clone().add(new THREE.Vector3(0, -1, 0).applyEuler(rotation)).round();
       const symbol = makeCubeInscription(label, position, rotation, id);
       const name = makeCubeInscription(label, position, rotation);
+      if (surfaceMaterial?.inscriptionColor !== undefined) {
+        symbol.material.color.set(surfaceMaterial.inscriptionColor);
+        name.material.color.set(surfaceMaterial.inscriptionColor);
+        for (const marking of [symbol, name]) {
+          marking.material.emissive.set(surfaceMaterial.inscriptionColor);
+          marking.material.emissiveIntensity = surfaceMaterial.inscriptionEmission ?? 0;
+        }
+      }
       cell.mesh.add(symbol.mesh);
       cells.find((candidate) => candidate.grid.equals(below))!.mesh.add(name.mesh);
       return { symbol, name, cell };
     });
-    const faces = markings.flatMap(({ symbol, name }) => [symbol, name]);
+    const distributed: ReturnType<typeof makeCubeInscription>[] = [];
+    if (surfaceMaterial?.faceArtwork) {
+      const sides = [
+        { kind: "dados" as const, normal: new THREE.Vector3(0, 0, 1), rotation: new THREE.Euler() },
+        { kind: "dados" as const, normal: new THREE.Vector3(0, 0, -1), rotation: new THREE.Euler(0, Math.PI, 0) },
+        { kind: "inteligencia" as const, normal: new THREE.Vector3(1, 0, 0), rotation: new THREE.Euler(0, Math.PI / 2, 0) },
+        { kind: "inteligencia" as const, normal: new THREE.Vector3(-1, 0, 0), rotation: new THREE.Euler(0, -Math.PI / 2, 0) },
+        { kind: "automacao" as const, normal: new THREE.Vector3(0, 1, 0), rotation: new THREE.Euler(-Math.PI / 2, 0, 0) },
+        { kind: "automacao" as const, normal: new THREE.Vector3(0, -1, 0), rotation: new THREE.Euler(Math.PI / 2, 0, 0) },
+      ];
+      for (const { kind, normal, rotation } of sides) {
+        const right = new THREE.Vector3(1, 0, 0).applyEuler(rotation);
+        const up = new THREE.Vector3(0, 1, 0).applyEuler(rotation);
+        for (const { mesh, grid } of cells) {
+          if (grid.dot(normal) !== 1) continue;
+          const column = Math.round(grid.dot(right)) + 1;
+          const row = 1 - Math.round(grid.dot(up));
+          const art = surfaceMaterial.faceArtwork(kind, column, row);
+          art.mesh.position.copy(normal).multiplyScalar(CELL_SIZE / 2 + 0.004);
+          art.mesh.rotation.copy(rotation);
+          mesh.add(art.mesh);
+          distributed.push(art);
+        }
+      }
+    }
+    const faces = [...markings.flatMap(({ symbol, name }) => [symbol, name]), ...distributed];
     const glow = createCubeGlow(renderer, scene, camera, cells, [...cornerMarks, ...faces.map(({ mesh }) => mesh)], compact);
     const orientations = FRONT_STATES.map((state) => ({
       ...state, rotation: new THREE.Quaternion().setFromEuler(new THREE.Euler(...state.rotation)),
@@ -259,8 +362,8 @@ export const HawksCube = forwardRef(function HawksCube(
           advanceSpring(spring, target, dt, target > spring.value ? 11 : 14);
         }
         mesh.position.copy(grid).multiplyScalar(CELL_STEP).addScaledVector(direction, spring.value * EXPANSION);
-        interior.emissiveIntensity = spring.value * 0.65;
-        glowMaterial.color.copy(glowColor).multiplyScalar(spring.value * 1.25);
+        interior.emissiveIntensity = THREE.MathUtils.lerp(IDLE_EMISSION, 0.65, spring.value);
+        glowMaterial.color.copy(glowColor).multiplyScalar(THREE.MathUtils.lerp(IDLE_GLOW, 1.25, spring.value));
         maxOpening = Math.max(maxOpening, spring.value);
         if (spring.value > 0.025) affected++;
         localMotion ||= spring.value !== target || spring.velocity !== 0;
@@ -289,13 +392,15 @@ export const HawksCube = forwardRef(function HawksCube(
       mount!.dataset.pulseCount = String(pulseCount);
       mount!.dataset.autoPulse = automaticStrength.toFixed(3);
       mount!.dataset.ambientTime = ambientTime.toFixed(3);
+      mount!.dataset.ambientRotation = [floatRig.rotation.x, floatRig.rotation.y, floatRig.rotation.z].map((value) => value.toFixed(4)).join(",");
       mount!.dataset.floatPosition = floatRig.position.toArray().map((value) => value.toFixed(4)).join(",");
       mount!.dataset.visualRotation = visualRotation.toArray().map((value) => value.toFixed(4)).join(",");
       mount!.dataset.expansion = maxOpening.toFixed(3);
       mount!.dataset.affectedPieces = String(affected);
       mount!.dataset.hoverPoint = hoverPoint.toArray().map((value) => value.toFixed(2)).join(",");
       mount!.dataset.rotation = cube.quaternion.toArray().map((value) => value.toFixed(4)).join(",");
-      glow.render(maxOpening > 0.001);
+      // The same selective bloom pipeline also keeps the resting interior softly lit.
+      glow.render(true);
       const moving = ambient || ambientAmount.velocity !== 0 || localMotion
         || cube.quaternion.angleTo(targetRotation) > 0.0002
         || Math.abs(cameraDolly.value - cameraTarget) > 0.0001 || cameraDolly.velocity !== 0;
@@ -543,10 +648,12 @@ export const HawksCube = forwardRef(function HawksCube(
       glowOccluder.dispose();
       cells.forEach(({ glowMaterial }) => glowMaterial.dispose());
       geometry.dispose();
+      surfaceGeometries.forEach((surfaceGeometry) => surfaceGeometry.dispose());
       cornerMarks.forEach((mark) => mark.geometry.dispose());
       cornerMaterial.dispose();
       cellMaterials.forEach((material) => {
-        material.map?.dispose();
+        // Supplied study maps belong to the caller and survive material changes.
+        if (!surfaceMaterial) material.map?.dispose();
         material.dispose();
       });
       interiorMaterials.forEach((material) => material.dispose());
@@ -555,12 +662,14 @@ export const HawksCube = forwardRef(function HawksCube(
         material.dispose();
         texture.dispose();
       });
+      if (ownedSurface) disposeAtlasSurface(ownedSurface);
       renderer.dispose();
+      renderer.forceContextLoss();
       renderer.domElement.remove();
       scene.clear();
       apiRef.current = null;
     };
-  }, [reducedMotion, onFrontChange]);
+  }, [reducedMotion, onFrontChange, surfaceOverride]);
 
   useEffect(() => { apiRef.current?.setExpanded(expanded); }, [expanded, reducedMotion]);
   useEffect(() => { apiRef.current?.setMotionPaused(motionPaused); }, [motionPaused, reducedMotion]);
@@ -569,6 +678,7 @@ export const HawksCube = forwardRef(function HawksCube(
     <div
       ref={mountRef}
       className={`hawks-cube${webglUnavailable ? " is-unavailable" : ""}`}
+      data-cube-style={surfaceOverride ? "study" : "atlas"}
       tabIndex={webglUnavailable ? undefined : 0}
       role="group"
       aria-label="Cubo 3D HAWKS BI. Arraste para girar ou use as setas do teclado."
