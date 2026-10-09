@@ -16,7 +16,7 @@ export const products = [
   },
   {
     id: "agendo" as const, name: "Agendo", category: "Agenda e atendimento", status: "Em validação",
-    logo: "/assets/products/agendo-logo.png", symbol: "", href: "https://app.agendo.hawksbi.com.br/", action: "Ver prévia do Agendo",
+    logo: "/assets/products/agendo-logo.png", symbol: "", href: "https://agendo.hawksbi.com.br/", action: "Conhecer o Agendo",
     title: "Sua agenda. Seu jeito de atender.",
     description: "Agendamento online para negócios de serviços, com página própria, gestão de pedidos e aprovação de horários. O atendimento pelo WhatsApp está em validação.",
     intro: "Facilitando o agendamento dos clientes, respeitando o jeito de cada negócio atender. Do pedido à confirmação, a agenda mantém claras as decisões que cabem ao profissional.",

@@ -8,7 +8,7 @@ const scenes = [
 
 const products = [
   { name: "Conexo", symbol: "/assets/products/conexo-symbol.svg", wordmark: "/assets/products/conexo-wordmark.svg", status: "Em validação", category: "Atendimento multicanal", description: "Reúne conversas de WhatsApp, Instagram e e-mail em um histórico e passa o contexto para a equipe assumir o atendimento.", href: "/produtos/conexo/", action: "Conhecer o Conexo" },
-  { name: "Agendo", symbol: undefined, wordmark: "/assets/products/agendo-logo.png", status: "Em validação", category: "Agendamentos", description: "Organiza pedidos de horário pela web, respeitando a forma de atender e aprovar de cada negócio. O atendimento pelo WhatsApp está em validação.", href: "/produtos/agendo/", action: "Conhecer o Agendo" },
+  { name: "Agendo", symbol: undefined, wordmark: "/assets/products/agendo-logo.png", status: "Em validação", category: "Agendamentos", description: "Organiza pedidos de horário pela web, respeitando a forma de atender e aprovar de cada negócio. O atendimento pelo WhatsApp está em validação.", href: "https://agendo.hawksbi.com.br/", action: "Conhecer o Agendo" },
 ];
 
 function CheckMark() {
