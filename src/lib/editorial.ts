@@ -1,9 +1,9 @@
 export type ProductId = "visto" | "agendo" | "conexo";
 export const products = [
   {
-    id: "visto" as const, name: "Visto", category: "Rotinas e controle operacional", status: "Em operação",
+    id: "visto" as const, name: "Visto", cardTitle: "Acompanhe o trabalho. Confira o registro.", cardDescription: "Checklists, fotos e histórico para saber o que foi feito e o que precisa de atenção.", highlights: ["Rotinas", "Evidências", "Relatórios"], category: "Rotinas e controle operacional", status: "Em operação",
     logo: "/assets/products/visto-wordmark.svg", symbol: "/assets/products/visto-symbol.svg", href: "https://visto.hawksbi.com.br/", action: "Acessar o Visto",
-    title: "A rotina acontece. O contexto fica.",
+    title: "Saiba o que foi feito. Veja o que precisa de atenção.",
     description: "Software de gestão de rotinas operacionais, checklists e evidências. O Visto conecta quem executa o trabalho a quem precisa acompanhar e decidir.",
     intro: "Uma tarefa concluída conta uma parte da história. Saber o que foi feito, em qual setor e com qual evidência permite acompanhar a operação com mais contexto.",
     features: [
@@ -15,21 +15,21 @@ export const products = [
     note: "As novidades em preparação estão identificadas no blog. A disponibilidade de cada atualização depende da versão publicada.",
   },
   {
-    id: "agendo" as const, name: "Agendo", category: "Agenda e atendimento", status: "Em validação",
+    id: "agendo" as const, name: "Agendo", cardTitle: "Deixe o cliente escolher o horário.", cardDescription: "Uma página com a sua marca para agendar serviços. Você acompanha os pedidos e gerencia a agenda.", highlights: ["Agenda online", "Página própria", "Gestão de pedidos"], category: "Agenda e atendimento", status: "Em operação",
     logo: "/assets/products/agendo-logo.png", symbol: "", href: "https://agendo.hawksbi.com.br/", action: "Conhecer o Agendo",
-    title: "Sua agenda. Seu jeito de atender.",
-    description: "Agendamento online para negócios de serviços, com página própria, gestão de pedidos e aprovação de horários. O atendimento pelo WhatsApp está em validação.",
-    intro: "Facilitando o agendamento dos clientes, respeitando o jeito de cada negócio atender. Do pedido à confirmação, a agenda mantém claras as decisões que cabem ao profissional.",
+    title: "Seus clientes agendam. Você acompanha cada pedido.",
+    description: "Agendamento online com a identidade do seu negócio. Seus clientes escolhem serviço, profissional e horário; você gerencia os pedidos.",
+    intro: "Compartilhe sua página de agendamento e acompanhe os pedidos pelo painel. Quando a aprovação é manual, você decide quais horários confirmar.",
     features: [
       { title: "Um caminho para agendar", text: "O cliente escolhe profissional, serviço e horário pela página pública, sem precisar criar uma conta para consultar a agenda." },
       { title: "A decisão continua sua", text: "No modo manual, o pedido aguarda aprovação. A gestão reúne próximos atendimentos, solicitações e a rotina do negócio." },
       { title: "A marca do seu negócio", text: "Logo, cor e foto de apresentação personalizam a página. A mesma identidade acompanha o painel de gestão, preservando a leitura dos estados da agenda." },
     ],
     audience: "Criado para negócios que atendem com hora marcada, como salões, barbearias, estúdios de beleza e profissionais independentes.",
-    note: "Produto em validação. A agenda e a personalização estão em ambiente de testes; o atendimento assistido pelo WhatsApp ainda não foi liberado para uso geral.",
+    note: "O Agendo está em operação. O novo atendimento assistido pelo WhatsApp segue em testes e tem sua disponibilidade indicada no blog.",
   },
   {
-    id: "conexo" as const, name: "Conexo", category: "Atendimento multicanal", status: "Em validação",
+    id: "conexo" as const, name: "Conexo", cardTitle: "Continue a conversa com o contexto em mãos.", cardDescription: "Estamos desenvolvendo um espaço para reunir canais, histórico e equipe no atendimento.", highlights: ["Conversas", "Histórico", "Equipe"], category: "Atendimento multicanal", status: "Em validação",
     logo: "/assets/products/conexo-wordmark.svg", symbol: "/assets/products/conexo-symbol.svg", href: "https://conexo.hawksbi.com.br/", action: "Visitar o Conexo",
     title: "A conversa muda de canal. O contexto continua.",
     description: "Conheça o Conexo, produto da Hawks BI em validação para reunir canais e preservar o contexto do atendimento entre automação e equipe.",
@@ -69,10 +69,10 @@ export const articles: Article[] = [
     ],
   },
   {
-    slug: "agendo-identidade-do-negocio", product: "agendo", date: "2026-10-08", status: "Em validação",
+    slug: "agendo-identidade-do-negocio", product: "agendo", date: "2026-10-08", status: "Registro de desenvolvimento",
     title: "O Agendo com a cara de quem atende.",
     summary: "Logo, cor e foto de apresentação aproximam a página de agendamento da identidade de cada negócio.",
-    note: "Personalização implementada e validada no ambiente de testes. O Agendo segue em preparação para o piloto.",
+    note: "Este artigo registra a validação da personalização. O Agendo está em operação; consulte a Hawks sobre a disponibilidade de cada recurso.",
     sections: [
       { title: "A primeira impressão pertence ao negócio", paragraphs: ["A página de agendamento é uma extensão do atendimento. Na evolução mais recente da identidade do Agendo, cada negócio pode ter uma foto de apresentação independente do logo, além da sua própria cor.", "A foto aparece na entrada da experiência, onde ajuda o cliente a reconhecer quem vai atendê-lo. Nos passos compactos e no recibo, o espaço continua reservado às informações do agendamento."] },
       { title: "A mesma marca também no painel", paragraphs: ["Logo e cor salvos para o negócio acompanham a página pública e o painel de gestão. A identificação fica consistente entre o que o cliente vê e o ambiente usado pelo profissional.", "Cores claras recebem ajustes de contraste para manter textos e ações legíveis. Os estados da agenda conservam seus significados, mesmo quando a identidade visual do negócio muda."] },

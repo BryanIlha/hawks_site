@@ -97,7 +97,9 @@ for (const [path, page] of pages) {
     assert.equal(service.url, getPageMeta(path).url);
     assert.equal(service.areaServed.name, 'Gravataí');
     assert.ok(page.includes('Atendimento presencial'));
-    assert.ok(page.includes('mailto:contato@hawksbi.com.br'));
+    assert.equal(organization.email, 'comercial@hawksbi.com.br');
+    assert.ok(page.includes('aria-haspopup="dialog"'));
+    assert.ok(!page.includes('mailto:'));
   }
 }
 console.log('SEO local: base, serviços, contato e referências JSON-LD consistentes.');

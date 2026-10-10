@@ -1,3 +1,7 @@
 node_modules
 .ssr
 node_modules
+
+.dev.vars*
+.env*
+.wrangler

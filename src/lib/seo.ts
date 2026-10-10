@@ -9,10 +9,10 @@ const websiteId = `${origin}/#website`;
 const area = { '@type': 'City', name: 'Gravataí', containedInPlace: { '@type': 'State', name: 'Rio Grande do Sul' } };
 const organization = {
   '@type': 'Organization', '@id': organizationId, name: 'Hawks BI', url: `${origin}/`,
-  logo: `${origin}/assets/brand/orange-hawks-bi-transparent.png`, email: 'contato@hawksbi.com.br',
+  logo: `${origin}/assets/brand/orange-hawks-bi-transparent.png`, email: 'comercial@hawksbi.com.br',
   description: 'Software sob medida e automação de processos. Base em Gravataí, RS, com atendimento presencial.',
   address: { '@type': 'PostalAddress', addressLocality: 'Gravataí', addressRegion: 'RS', addressCountry: 'BR' },
-  contactPoint: { '@type': 'ContactPoint', email: 'contato@hawksbi.com.br', contactType: 'sales', availableLanguage: 'pt-BR' },
+  contactPoint: { '@type': 'ContactPoint', email: 'comercial@hawksbi.com.br', contactType: 'sales', availableLanguage: 'pt-BR' },
 };
 const website = { '@type': 'WebSite', '@id': websiteId, name: 'Hawks BI', url: `${origin}/`, inLanguage: 'pt-BR', publisher: { '@id': organizationId } };
 const serviceEntity = (service: (typeof services)[number]) => ({

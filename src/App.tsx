@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Header } from "./components/Header";
+import { ContactProvider } from "./components/ContactDialog";
 import { Footer } from "./components/Footer";
 import type { ReactNode } from "react";
 import { normalizePath, updateDocumentMeta } from "./lib/seo";
@@ -22,5 +23,5 @@ export default function App({ path = "/", children }: { path?: string; children:
     else window.addEventListener("load", followAnchor, { once: true });
     return () => { cancelled = true; window.removeEventListener("load", followAnchor); };
   }, [route]);
-  return <div className="site-shell"><Header />{children}<Footer /></div>;
+  return <ContactProvider><div className="site-shell"><Header />{children}<Footer /></div></ContactProvider>;
 }
