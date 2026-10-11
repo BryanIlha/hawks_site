@@ -1,3 +1,9 @@
+## Guias do projeto
+
+[AGENTS](AGENTS.md) · [PRODUCT](PRODUCT.md) · [DESIGN](DESIGN.md) · [Contrato](docs/project-workflow.md) · [Mapa documental](docs/documentation-map.md) · [Estado](docs/status.md).
+
+Padrões Hawks fixados em [.hawks/workflow.json](.hawks/workflow.json); validação: `python3 .hawks/check.py`. Alterações comuns exigem fonte central e propagação global.
+
 # hawks_site
 
 ## Adoção Hawks 1.1.0
