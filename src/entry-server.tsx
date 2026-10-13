@@ -7,3 +7,5 @@ export async function render(path = "/") {
   const content = await resolvePage(path);
   return renderToString(<StrictMode><App path={path}>{content}</App></StrictMode>);
 }
+
+export { publicBlogFeed, blogProductIds, createPublicBlogFeed } from "./lib/blogFeed";
