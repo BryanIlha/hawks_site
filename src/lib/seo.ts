@@ -8,17 +8,43 @@ const organizationId = `${origin}/#organization`;
 const websiteId = `${origin}/#website`;
 const area = { '@type': 'City', name: 'Gravataí', containedInPlace: { '@type': 'State', name: 'Rio Grande do Sul' } };
 const organization = {
-  '@type': 'Organization', '@id': organizationId, name: 'Hawks BI', url: `${origin}/`,
-  logo: `${origin}/assets/brand/orange-hawks-bi-transparent.png`, email: 'comercial@hawksbi.com.br',
+  '@type': ['Organization', 'LocalBusiness'], '@id': organizationId, name: 'Hawks BI', url: `${origin}/`,
+  logo: `${origin}/assets/brand/orange-hawks-bi-transparent.png`,
+  image: `${origin}/assets/brand/orange-hawks-bi-transparent.png`,
+  email: 'comercial@hawksbi.com.br', telephone: '+5551995614866',
   description: 'Software sob medida e automação de processos. Base em Gravataí, RS, com atendimento presencial.',
-  address: { '@type': 'PostalAddress', addressLocality: 'Gravataí', addressRegion: 'RS', addressCountry: 'BR' },
-  contactPoint: { '@type': 'ContactPoint', email: 'comercial@hawksbi.com.br', contactType: 'sales', availableLanguage: 'pt-BR' },
+  address: {
+    '@type': 'PostalAddress', streetAddress: 'Rua Bernardo Joaquim Ferreira, 1780, Parque dos Anjos',
+    addressLocality: 'Gravataí', addressRegion: 'RS', postalCode: '94190-000', addressCountry: 'BR',
+  },
+  openingHoursSpecification: [{
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day) => `https://schema.org/${day}`),
+    opens: '09:00:00', closes: '20:00:00',
+  }],
+  areaServed: area,
+  contactPoint: {
+    '@type': 'ContactPoint', email: 'comercial@hawksbi.com.br', telephone: '+5551995614866',
+    contactType: 'sales', availableLanguage: 'pt-BR',
+  },
 };
 const website = { '@type': 'WebSite', '@id': websiteId, name: 'Hawks BI', url: `${origin}/`, inLanguage: 'pt-BR', publisher: { '@id': organizationId } };
 const serviceEntity = (service: (typeof services)[number]) => ({
   '@type': 'Service', '@id': `${origin}${servicePath(service.slug)}#service`,
   name: service.name, description: service.description, serviceType: service.name,
   url: `${origin}${servicePath(service.slug)}`, provider: { '@id': organizationId }, areaServed: area,
+});
+const softwareEntity = (product: (typeof products)[number]) => ({
+  '@type': 'WebApplication', '@id': `${origin}${productPath(product.id)}#software`,
+  name: product.name, description: product.description, url: product.href,
+  image: `${origin}${product.logo}`, applicationCategory: 'BusinessApplication',
+  applicationSubCategory: product.category, inLanguage: 'pt-BR',
+  creativeWorkStatus: product.status, abstract: product.note,
+  featureList: product.features.map((feature) => `${feature.title}: ${feature.text}`),
+  creator: { '@id': organizationId }, publisher: { '@id': organizationId },
+  mainEntityOfPage: { '@id': `${origin}${productPath(product.id)}#webpage` },
+  // Semantic description only: Google app rich results also need a real price and review.
+  // Neither is published, so don't imply a free offer or invent a rating.
 });
 
 export function getPageMeta(path: string) {
@@ -53,6 +79,27 @@ export function getPageMeta(path: string) {
     const entity = serviceEntity(service);
     graph.push(entity);
     page.mainEntity = { '@id': entity['@id'] };
+  }
+  if (product) {
+    const entity = softwareEntity(product);
+    graph.push(entity);
+    page.mainEntity = { '@id': entity['@id'] };
+    page.about = { '@id': entity['@id'] };
+  }
+  if (route === '/produtos/') {
+    page['@type'] = 'CollectionPage';
+    const listId = `${url}#products`;
+    page.mainEntity = { '@id': listId };
+    graph.push({
+      '@type': 'ItemList', '@id': listId, name: 'Produtos Hawks BI', numberOfItems: products.length,
+      itemListElement: products.map((item, index) => ({
+        '@type': 'ListItem', position: index + 1,
+        item: {
+          '@type': 'WebPage', '@id': `${origin}${productPath(item.id)}#webpage`,
+          name: item.name, url: `${origin}${productPath(item.id)}`,
+        },
+      })),
+    });
   }
   if (article) {
     page.mainEntity = { '@id': `${url}#article` };

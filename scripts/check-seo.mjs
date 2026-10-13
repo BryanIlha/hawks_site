@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
+import { hasType, validateSchema } from './validate-schema.mjs';
 
 const dist = new URL("../dist/", import.meta.url);
 const html = await readFile(new URL("index.html", dist), "utf8");
@@ -22,7 +23,7 @@ await access(new URL(image.pathname.slice(1), dist));
 const graph = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1]);
 assert.equal(graph["@context"], "https://schema.org");
 assert.ok(graph["@graph"].some((entity) => entity["@type"] === "WebPage"));
-assert.ok(graph["@graph"].some((entity) => entity["@type"] === "Organization"));
+assert.ok(graph["@graph"].some((entity) => hasType(entity, 'Organization')));
 assert.equal(graph["@graph"].filter((entity) => entity["@type"] === "Service").length, 4);
 const ids = graph["@graph"].map((entity) => entity["@id"]);
 assert.equal(new Set(ids).size, ids.length);
@@ -49,8 +50,8 @@ for (const path of pagePaths) {
   assert.ok(title && !titles.has(title), `Título único: ${path}`);
   titles.add(title);
   assert.ok(sitemap.includes(`<loc>${expected.url}</loc>`), `Sitemap: ${path}`);
-  const structured = JSON.parse(page.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1]);
-  assert.equal(structured['@graph'].find((item) => item['@type'] === 'WebPage').url, expected.url);
+  const structured = validateSchema(page, path);
+  assert.equal(structured['@graph'].find((item) => hasType(item, 'WebPage') || hasType(item, 'CollectionPage')).url, expected.url);
   if (path.startsWith('/blog/') && path !== '/blog/') {
     const post = structured['@graph'].find((item) => item['@type'] === 'BlogPosting');
     assert.ok(post?.headline && post?.author?.name && post?.datePublished, `Artigo: ${path}`);
@@ -83,7 +84,7 @@ for (const [path, page] of pages) {
   assert.ok(page.includes('Gravataí'), `Base local: ${path}`);
   assert.ok(!page.includes('São Paulo'), `Localidade antiga: ${path}`);
   const entities = JSON.parse(page.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])['@graph'];
-  const organization = entities.find((entity) => entity['@type'] === 'Organization');
+  const organization = entities.find((entity) => hasType(entity, 'Organization'));
   assert.equal(organization.address.addressLocality, 'Gravataí');
   const ids = new Set(entities.map((entity) => entity['@id']));
   function checkRefs(value) {
@@ -103,3 +104,4 @@ for (const [path, page] of pages) {
   }
 }
 console.log('SEO local: base, serviços, contato e referências JSON-LD consistentes.');
+console.log('Schema: endereço completo, telefone, horários, três softwares, catálogo, breadcrumbs e conteúdo visível consistentes.');
