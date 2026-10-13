@@ -1,4 +1,5 @@
 import { pagePaths, getPageMeta } from '../.ssr/entry-server.js';
+import { validateSchema } from './validate-schema.mjs';
 
 // Run after building. Reads only the target website; does not submit indexing requests.
 const base = new URL(process.argv[2] ?? 'https://hawksbi.com.br/');
@@ -16,6 +17,7 @@ for (const path of pagePaths) {
     if (decode(html.match(/<title>(.*?)<\/title>/)?.[1] ?? '') !== expected.title) failures.push(`${path}: título divergente ou versão antiga`);
     if ((html.match(/<h1(?:\s|>)/g) ?? []).length !== 1) failures.push(`${path}: H1 ausente ou duplicado no HTML inicial`);
     if (/name="robots" content="[^"]*noindex/.test(html) || /noindex/i.test(response.headers.get('x-robots-tag') ?? '')) failures.push(`${path}: noindex`);
+    validateSchema(html, path);
   } catch (error) { failures.push(`${path}: ${error.message}`); }
 }
 try {
@@ -32,4 +34,4 @@ try {
 if (failures.length) {
   console.error(`Falhas em ${base.origin}:\n${failures.map((failure) => `- ${failure}`).join('\n')}`);
   process.exitCode = 1;
-} else console.log(`${pagePaths.length} rotas verificadas em ${base.origin}: HTML, canonical, título, indexabilidade, sitemap, robots e HTTP 404.`);
+} else console.log(`${pagePaths.length} rotas verificadas em ${base.origin}: HTML, dados estruturados, canonical, título, indexabilidade, sitemap, robots e HTTP 404.`);

@@ -3,9 +3,18 @@ import { FRONT_STATES, type FrontId } from "../lib/fronts";
 import { usePrefersReducedMotion } from "../lib/useReducedMotion";
 import type { HawksCubeHandle } from "./HawksCube";
 import { CubePreview } from "./CubePreview";
+import { MobileOperationMotion } from "./MobileOperationMotion";
 
 export function Hero() {
   const cubeRef = useRef<HawksCubeHandle>(null);
+  const [mobile, setMobile] = useState<boolean | null>(null);
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 899px)");
+    const update = () => setMobile(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
   const [Cube, setCube] = useState<typeof import("./HawksCube").HawksCube | null>(null);
   const [interactive, setInteractive] = useState(false);
   const [cubeLoading, setCubeLoading] = useState(false);
@@ -20,15 +29,14 @@ export function Hero() {
   }, []);
   useEffect(() => {
     let mounted = true;
-    // Phones get immediate geometry and controls; the full renderer is opt-in.
-    if (window.matchMedia("(max-width: 899px)").matches) return;
+    if (mobile !== false) return;
     const timer = window.setTimeout(() => {
       void import("./HawksCube").then(({ HawksCube }) => {
         if (mounted) { setCube(() => HawksCube); setInteractive(true); }
       }).catch(() => { /* The static representation and all page content remain usable. */ });
     }, 600);
     return () => { mounted = false; clearTimeout(timer); };
-  }, []);
+  }, [mobile]);
   const selectorRef = useRef<HTMLDivElement>(null);
   const reducedMotion = usePrefersReducedMotion();
   const [activeFront, setActiveFront] = useState<FrontId>("dados");
@@ -59,23 +67,26 @@ export function Hero() {
         <div className="hero-layout section-frame">
           <div className="hero-copy">
             <div className="hero-copy__body">
-              <h1>Três frentes.<br /><em>Um sistema.</em></h1>
+              <h1><span className="hero-desktop-copy">Três frentes.<br /><em>Um sistema.</em></span><span className="hero-mobile-copy">Software e automações.<span className="sr-only"> À sua medida.</span></span></h1>
+              <div className="hero-mobile-motion mobile-only"><MobileOperationMotion enabled={mobile === true} /></div>
+              <p className="hero-mobile-tagline mobile-only" aria-hidden="true">À sua medida.</p>
               <p className="hero-lede">
-                Software sob medida e automação de processos em Gravataí. Conectamos dados, sistemas e decisões à rotina da sua operação.
+                <span className="hero-desktop-copy">Software sob medida e automação de processos em Gravataí. Conectamos dados, sistemas e decisões à rotina da sua operação.</span>
+                <span className="hero-mobile-copy">Desenvolvemos a solução para o que seu negócio precisa.</span>
               </p>
             </div>
           </div>
 
           <div className="hero-actions">
             <a href="#contato" className="button button-primary">
-              <span>Entre em contato.</span><span className="arrow-capsule" aria-hidden="true">↗</span>
+              <span className="hero-desktop-copy">Entre em contato.</span><span className="hero-mobile-copy">Conversar sobre meu projeto</span><span className="arrow-capsule hero-desktop-copy" aria-hidden="true">↗</span><svg className="mobile-only" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg>
             </a>
-            <a href="#ferramentas" className="text-link">Veja na prática <span aria-hidden="true">↘</span></a>
+            <a href="#ferramentas" className="text-link hero-desktop-copy">Veja na prática <span aria-hidden="true">↘</span></a>
           </div>
 
-          <div className="hero-object">
+          <div className="hero-object hero-object--desktop">
             <div className="hero-object__stage">
-              {Cube && interactive ? <Cube ref={cubeRef} front={activeFront} reducedMotion={reducedMotion} expanded={expanded} motionPaused={motionPaused} onFrontChange={handleFrontChange} /> : <CubePreview front={activeFront} paused={motionPaused || reducedMotion} />}
+              {mobile === false && (Cube && interactive ? <Cube ref={cubeRef} front={activeFront} reducedMotion={reducedMotion} expanded={expanded} motionPaused={motionPaused} onFrontChange={handleFrontChange} /> : <CubePreview front={activeFront} paused={motionPaused || reducedMotion} />)}
             </div>
             <div className="cube-readout" aria-live="polite" aria-atomic="true">
               <span className="cube-readout__index">0{active.index + 1}</span>

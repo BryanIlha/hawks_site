@@ -33,3 +33,8 @@ O AGENTS anterior está preservado no [commit auditado](https://github.com/Bryan
 - [docs/contact-form-setup.md](https://github.com/BryanIlha/hawks_site/blob/d68ebc788bce2c8ca9c88168d0f73d13221939ba/docs/contact-form-setup.md) — versão anterior à consolidação; consultar o mesmo caminho atual quando existir.
 - [docs/project-workflow.md](https://github.com/BryanIlha/hawks_site/blob/d68ebc788bce2c8ca9c88168d0f73d13221939ba/docs/project-workflow.md) — versão anterior à consolidação; consultar o mesmo caminho atual quando existir.
 - [docs/status.md](https://github.com/BryanIlha/hawks_site/blob/d68ebc788bce2c8ca9c88168d0f73d13221939ba/docs/status.md) — versão anterior à consolidação; consultar o mesmo caminho atual quando existir.
+
+## Anexos incorporados na base de 12/10/2026
+
+- [Auditoria de schema](schema-audit-2026-10-12.md) — evidência datada da implementação de SEO; preservada na reconciliação da INF-401.
+- [Motion mobile](../design/motion/Hawks-Criacao-Mobile.md) — documentação do asset existente, sem mudança de identidade nesta adoção.
