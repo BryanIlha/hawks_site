@@ -3,15 +3,15 @@
 - id: inf-442-agendo-whatsapp-lancamento
 - products: [agendo, hawks]
 - type: improvement
-- editorial_status: selecionado
-- availability: implementado
-- integrated_at: pendente
-- released_at: pendente
+- editorial_status: publicado
+- availability: producao
+- integrated_at: 2026-10-15
+- released_at: 2026-10-15
 - issue: https://linear.app/infra-hawks/issue/INF-442
-- pull_request: pendente
-- commit: pendente
-- published_url: pendente
-- published_at: pendente
+- pull_request: https://github.com/BryanIlha/hawks_site/pull/4
+- commit: 9c72ff60d601060d97fe0bdf8cd5a2151d555cce
+- published_url: https://hawksbi.com.br/blog/agendo-integracao-whatsapp/
+- published_at: 2026-10-15T20:52:42Z (primeira conferência pública registrada)
 - weekly_post: não se aplica; nota de lançamento individual
 
 ## O que mudou
@@ -24,7 +24,7 @@ O visitante entende que a integração conecta o atendimento à mesma agenda do 
 
 ## Evidências e limitações
 
-Gates e publicação serão registrados em `docs/validation/INF-442-publicacao.md`. Sem preços, prazos, métricas, depoimentos, lembretes ou promessa de entrega de mensagens. Nenhuma mensagem, pareamento ou agendamento real será feito.
+Gates e publicação registrados em `docs/validation/INF-442-publicacao.md`. Artigo HTTP 200 e item visível em https://agendo.hawksbi.com.br/#novidades, com link canônico para a Hawks. Sem preços, prazos, métricas, depoimentos, lembretes ou promessa de entrega de mensagens. Nenhuma mensagem, pareamento ou agendamento real foi feito.
 
 ## Sincronização e tratamento editorial
 

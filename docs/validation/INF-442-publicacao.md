@@ -30,7 +30,13 @@ Limites corrigidos da execução: uma checagem SEO prematura leu o dist antigo e
 
 Browser no build estático em 360, 390, 768 e 1440 px: artigo, metadados, seis bullets, quatro etapas, três respostas, CTA, canonical, filtro Agendo, foco/teclado, zoom 200%, texto longo e ausência de erros de JavaScript passaram. Capturas mobile/desktop inspecionadas: identidade existente, bullets e leitura preservados. Relatório e capturas em `output/blog-whatsapp-2026-10-15` no pacote local desta conversa.
 
-Revisão própria do diff e do resultado: sem achados materiais. O Git local recusou o push por permissão; transporte remoto segue pelo conector GitHub já autorizado para o repositório, com branch própria e atualização sem force. PR, SHA integrado, hospedagem e URLs públicas serão acrescentados após observação. Não inferir publicação do build local.
+Revisão própria do diff e do resultado: sem achados materiais. O Git local recusou o push por permissão; transporte remoto pelo conector GitHub já autorizado para o repositório, com branch própria e atualização sem force. Árvore local e remota equivalentes: `e315023387968a33c0d5f8ec8d6bb805effd6363`.
+
+PR https://github.com/BryanIlha/hawks_site/pull/4 integrada em `master`, commit `9c72ff60d601060d97fe0bdf8cd5a2151d555cce`, após os dois checks verify e Cloudflare Pages do SHA `c0d143731ab8559fa67f3a4d05cbe18050072db6` concluírem com sucesso. Preview `b26ce800-9704-404e-8777-843c6e284fab`; produção no mesmo projeto `hawks-bi`, deployment `15f469eb-fb7a-4ef3-9528-7a492d13b850`, origem `master/9c72ff6`.
+
+Conferência pública em 15/10/2026, 17:52 no fuso America/Sao_Paulo: artigo e feed Agendo HTTP 200, título e conteúdo corretos, CORS de leitura presente. No navegador do cliente, a landing Agendo carregou o novo artigo em primeiro lugar em `#novidades`, com data de 15 de outubro, resumo aprovado, status Disponível mediante implementação e link para o artigo central. O registro histórico de 08/10 recebeu o contexto atual. A landing não precisou de novo deploy. Nenhum formulário, agendamento ou envio real foi acionado.
+
+URLs verificadas: https://hawksbi.com.br/blog/agendo-integracao-whatsapp/ e https://agendo.hawksbi.com.br/#novidades. Registro de produção fica nesta evidência e na INF-442; nenhuma declaração de indexação em buscadores.
 
 ## Matriz de sincronização
 
