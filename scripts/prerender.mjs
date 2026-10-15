@@ -1,5 +1,5 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { render, getPageMeta, pagePaths } from "../.ssr/entry-server.js";
+import { render, getPageMeta, pagePaths, publicBlogFeed, blogProductIds } from "../.ssr/entry-server.js";
 const dist = new URL("../dist/", import.meta.url);
 const template = await readFile(new URL("index.html", dist), "utf8");
 const manifest = JSON.parse(await readFile(new URL('.vite/manifest.json', dist), 'utf8'));
@@ -33,3 +33,9 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://w
 await writeFile(new URL("sitemap.xml", dist), sitemap);
 await writeFile(new URL("../public/sitemap.xml", import.meta.url), sitemap);
 console.log(`Pré-renderizadas ${pagePaths.length} páginas + página 404.`);
+
+await mkdir(new URL("blog/feeds/", dist), { recursive: true });
+await writeFile(new URL("blog/feed.json", dist), JSON.stringify(publicBlogFeed(), null, 2) + "\n");
+for (const product of blogProductIds) {
+  await writeFile(new URL(`blog/feeds/${product}.json`, dist), JSON.stringify(publicBlogFeed(product), null, 2) + "\n");
+}

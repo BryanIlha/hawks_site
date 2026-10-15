@@ -44,8 +44,8 @@ export const products = [
   },
 ];
 export type Product = typeof products[number];
-export type Article = { slug: string; product: ProductId; title: string; summary: string; date: string; status: string; note: string; sections: { title: string; paragraphs: string[] }[] };
-export const articles: Article[] = [
+export type Article = { slug: string; product: ProductId; products?: ProductId[]; kind?: "news" | "patch-notes"; editorialStatus?: "published" | "draft"; title: string; summary: string; date: string; status: string; note: string; sections: { title: string; paragraphs: string[] }[] };
+const editorialArticles: Article[] = [
   {
     slug: "visto-relatorios-filtros-e-exportacao", product: "visto", date: "2026-10-08", status: "Em preparação",
     title: "Relatórios do Visto: o recorte certo, do filtro à exportação.",
@@ -91,6 +91,7 @@ export const articles: Article[] = [
     ],
   },
 ];
+export const articles: Article[] = editorialArticles.filter(article => article.editorialStatus !== "draft");
 export const productPath = (id: ProductId) => `/produtos/${id}/`;
 export const articlePath = (slug: string) => `/blog/${slug}/`;
 export const formatDate = (date: string) => new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${date}T12:00:00Z`));

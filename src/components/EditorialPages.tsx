@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { articles, articlePath, formatDate, products, productPath, type Product, type Article } from "../lib/editorial";
 
 function Arrow() { return <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14" /></svg>; }
@@ -13,7 +13,7 @@ function ProductDiagram({ product }: { product: Product }) {
   </div>;
 }
 export function ProductPage({ product }: { product: Product }) {
-  const related = articles.filter((article) => article.product === product.id);
+  const related = articles.filter((article) => article.editorialStatus !== "draft" && (article.products ?? [article.product]).includes(product.id));
   return <main id="top" className="editorial-page section-light">
     <div className="section-frame"><Breadcrumb items={[{ label: "Produtos", href: "/produtos/" }, { label: product.name }]} />
       <section className="product-detail-hero"><div><h1>{product.title}</h1><p className="page-lede">{product.description}</p><div className="page-actions"><a className="button button-dark" href={product.href}>{product.action}<span className="arrow-capsule"><Arrow /></span></a><a className="text-link" href="/#contato">Conversar com a Hawks<Arrow /></a></div><p className="detail-status"><span />{product.status}</p></div><ProductDiagram product={product} /></section>
@@ -28,8 +28,18 @@ export function ProductsPage() { return <main id="top" className="editorial-page
 export function ArticleList({ items, heading = "h3" }: { items: Article[]; heading?: "h2" | "h3" }) { const Heading = heading; return <div className="article-list">{items.map((article) => <article key={article.slug}><div className="article-list__meta"><span>{products.find((product) => product.id === article.product)!.name}</span><time dateTime={article.date}>{formatDate(article.date)}</time></div><a className="article-list__link" href={articlePath(article.slug)}><div><Heading>{article.title}</Heading><p>{article.summary}</p></div><Arrow /></a><span className="article-list__status">{article.status}</span></article>)}</div>; }
 export function BlogPage() {
   const [filter, setFilter] = useState("todos");
-  const visible = articles.filter((article) => filter === "todos" || article.product === filter);
-  return <main id="top" className="editorial-page section-light"><div className="section-frame"><Breadcrumb items={[{ label: "Blog" }]} /><header className="journal-heading"><h1>Por dentro<br /><em>do que evolui.</em></h1><p>Novidades do Visto e do Agendo. O que mudou, por que mudou e como cada avanço chega à rotina.</p></header><div className="journal-toolbar"><div className="journal-filters" role="group" aria-label="Filtrar por produto">{[["todos", "Todos"], ["visto", "Visto"], ["agendo", "Agendo"]].map(([value, label]) => <button key={value} type="button" aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</button>)}</div><span role="status">{visible.length} artigos</span></div><ArticleList items={visible} heading="h2" /></div></main>;
+  useEffect(() => {
+    const product = new URLSearchParams(window.location.search).get("produto");
+    if (products.some(item => item.id === product)) setFilter(product!);
+  }, []);
+  const visible = articles.filter((article) => article.editorialStatus !== "draft" && (filter === "todos" || (article.products ?? [article.product]).includes(filter as Product["id"])));
+  const selectFilter = (value: string) => {
+    setFilter(value);
+    const url = new URL(window.location.href);
+    if (value === "todos") url.searchParams.delete("produto"); else url.searchParams.set("produto", value);
+    window.history.replaceState(null, "", url);
+  };
+  return <main id="top" className="editorial-page section-light"><div className="section-frame"><Breadcrumb items={[{ label: "Blog" }]} /><header className="journal-heading"><h1>Por dentro<br /><em>do que evolui.</em></h1><p>Novidades dos produtos Hawks. O que mudou, por que mudou e como cada avanço chega à rotina.</p></header><div className="journal-toolbar"><div className="journal-filters" role="group" aria-label="Filtrar por produto">{[["todos", "Todos"], ...products.map(product => [product.id, product.name])].map(([value, label]) => <button key={value} type="button" aria-pressed={filter === value} onClick={() => selectFilter(value)}>{label}</button>)}</div><span role="status">{visible.length} artigos</span></div>{visible.length ? <ArticleList items={visible} heading="h2" /> : <p className="availability-note">As próximas novidades deste produto vão aparecer aqui.</p>}</div></main>;
 }
 export function ArticlePage({ article }: { article: Article }) {
   const product = products.find((item) => item.id === article.product)!;
