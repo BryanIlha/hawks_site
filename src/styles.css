@@ -567,6 +567,12 @@ html { scrollbar-color: #766e63 var(--ink); }
 .article-byline svg { width: 15px; height: 15px; }
 .article-reading { max-width: 69ch; margin: 3rem auto 0; }
 .article-reading p { line-height: 1.85; font-size: 1.04rem; color: #524c43; }
+.article-reading ul, .article-reading ol { padding-left: 1.5rem; margin: 1rem 0; }
+.article-reading li { line-height: 1.85; font-size: 1.04rem; color: #524c43; padding-left: .25rem; }
+.article-reading li + li { margin-top: .6rem; }
+.article-faq > div + div { margin-top: 1.5rem; }
+.article-faq h3 { font-size: 1.1rem; line-height: 1.5; font-weight: 600; }
+.article-faq a { text-decoration: underline; text-underline-offset: .2em; }
 .article-reading section { margin-top: 3rem; }
 .article-reading h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); line-height: 1.25; font-weight: 600; letter-spacing: -.025em; text-wrap: balance; margin-bottom: 1rem; }
 .article-release-note { padding: 1.4rem 1.6rem; background: #e8dfd1; border-radius: 12px; }

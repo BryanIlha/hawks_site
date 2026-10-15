@@ -44,7 +44,42 @@ export function BlogPage() {
 export function ArticlePage({ article }: { article: Article }) {
   const product = products.find((item) => item.id === article.product)!;
   const related = articles.filter((item) => item.product === article.product && item.slug !== article.slug);
-  return <main id="top" className="editorial-page section-light"><div className="section-frame"><Breadcrumb items={[{ label: "Blog", href: "/blog/" }, { label: article.title }]} /><article className="journal-article"><header><h1>{article.title}</h1><p className="page-lede">{article.summary}</p><div className="article-byline"><span>Por <a href="/">Hawks BI</a></span><time dateTime={article.date}>{formatDate(article.date)}</time><a href={productPath(product.id)}>{product.name}<Arrow /></a></div></header><div className="article-reading"><aside className="article-release-note" aria-label="Disponibilidade da atualização"><strong>{article.status}</strong><p>{article.note}</p></aside>{article.sections.map((section) => <section key={section.title}><h2>{section.title}</h2>{section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</section>)}<div className="article-next-step"><h2>Conheça o {product.name}.</h2><p>{product.category} para conectar o trabalho à rotina da sua operação.</p><a className="button button-dark" href={productPath(product.id)}>Explorar o produto<span className="arrow-capsule"><Arrow /></span></a></div></div></article><section className="related-articles" aria-labelledby="read-next"><div className="editorial-section-heading"><h2 id="read-next">Continue a leitura.</h2><a className="text-link" href="/blog/">Todos os artigos<Arrow /></a></div><ArticleList items={related} /></section></div></main>;
+  return <main id="top" className="editorial-page section-light"><div className="section-frame">
+    <Breadcrumb items={[{ label: "Blog", href: "/blog/" }, { label: article.title }]} />
+    <article className="journal-article">
+      <header>
+        <h1>{article.title}</h1>
+        {(article.intro ?? [article.summary]).map(paragraph => <p className="page-lede" key={paragraph}>{paragraph}</p>)}
+        <div className="article-byline"><span>Por <a href="/">Hawks BI</a></span><time dateTime={article.date}>{formatDate(article.date)}</time><a href={productPath(product.id)}>{product.name}<Arrow /></a></div>
+      </header>
+      <div className="article-reading">
+        <aside className="article-release-note" aria-label="Disponibilidade da atualização"><strong>{article.status}</strong><p>{article.note}</p></aside>
+        {article.sections.map(section => <section key={section.title}>
+          <h2>{section.title}</h2>
+          {section.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
+          {section.bullets && <ul>{section.bullets.map(item => <li key={item}>{item}</li>)}</ul>}
+          {section.steps && <ol>{section.steps.map(item => <li key={item}>{item}</li>)}</ol>}
+          {section.closingParagraphs?.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
+        </section>)}
+        {article.faq && <section className="article-faq" aria-labelledby="article-faq-title">
+          <h2 id="article-faq-title">Perguntas frequentes</h2>
+          {article.faq.map(item => <div key={item.question}>
+            <h3>{item.question}</h3>
+            <p>{item.answer}{item.link && <> <a href={item.link.href}>{item.link.label}</a>.</>}</p>
+          </div>)}
+        </section>}
+        <div className="article-next-step">
+          <h2>{article.cta?.title ?? `Conheça o ${product.name}.`}</h2>
+          <p>{article.cta?.text ?? `${product.category} para conectar o trabalho à rotina da sua operação.`}</p>
+          <a className="button button-dark" href={article.cta?.href ?? productPath(product.id)}>{article.cta?.label ?? "Explorar o produto"}<span className="arrow-capsule"><Arrow /></span></a>
+        </div>
+      </div>
+    </article>
+    <section className="related-articles" aria-labelledby="read-next"><div className="editorial-section-heading"><h2 id="read-next">Continue a leitura.</h2><a className="text-link" href="/blog/">Todos os artigos<Arrow /></a></div><ArticleList items={related} /></section>
+  </div></main>;
 }
-export function JournalPreview() { return <section className="journal-preview section-light" aria-labelledby="journal-title"><div className="section-frame"><div className="editorial-section-heading"><h2 id="journal-title">Software em<br /><em>evolução.</em></h2><a className="text-link" href="/blog/">Acompanhe no blog<Arrow /></a></div><ArticleList items={[articles[0], articles[2]]} /></div></section>; }
+export function JournalPreview() {
+  const latest = products.flatMap(product => articles.filter(article => (article.products ?? [article.product]).includes(product.id)).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 1)).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 2);
+  return <section className="journal-preview section-light" aria-labelledby="journal-title"><div className="section-frame"><div className="editorial-section-heading"><h2 id="journal-title">Software em<br /><em>evolução.</em></h2><a className="text-link" href="/blog/">Acompanhe no blog<Arrow /></a></div><ArticleList items={latest} /></div></section>;
+}
 export function NotFoundPage() { return <main id="top" className="editorial-page section-light"><div className="section-frame not-found"><h1>Esse caminho<br /><em>não existe.</em></h1><p>A página pode ter mudado de endereço. Volte ao início ou explore nossos produtos.</p><div className="page-actions"><a className="button button-dark" href="/">Voltar ao início<Arrow /></a><a className="text-link" href="/produtos/">Conhecer os produtos<Arrow /></a></div></div></main>; }

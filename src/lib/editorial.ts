@@ -1,3 +1,5 @@
+import { agendoWhatsAppLaunch } from "./agendoWhatsAppLaunch";
+
 export type ProductId = "visto" | "agendo" | "conexo";
 export const products = [
   {
@@ -26,7 +28,7 @@ export const products = [
       { title: "A marca do seu negócio", text: "Logo, cor e foto de apresentação personalizam a página. A mesma identidade acompanha o painel de gestão, preservando a leitura dos estados da agenda." },
     ],
     audience: "Criado para negócios que atendem com hora marcada, como salões, barbearias, estúdios de beleza e profissionais independentes.",
-    note: "O Agendo está em operação. O novo atendimento assistido pelo WhatsApp segue em testes e tem sua disponibilidade indicada no blog.",
+    note: "O Agendo está em operação. A integração com WhatsApp está disponível mediante implementação, com canais, mensagens e fluxos configurados para cada negócio. O uso de IA depende da solução implementada.",
   },
   {
     id: "conexo" as const, name: "Conexo", cardTitle: "Continue a conversa com o contexto em mãos.", cardDescription: "Estamos desenvolvendo um espaço para reunir canais, histórico e equipe no atendimento.", highlights: ["Conversas", "Histórico", "Equipe"], category: "Atendimento multicanal", status: "Em validação",
@@ -44,8 +46,16 @@ export const products = [
   },
 ];
 export type Product = typeof products[number];
-export type Article = { slug: string; product: ProductId; products?: ProductId[]; kind?: "news" | "patch-notes"; editorialStatus?: "published" | "draft"; title: string; summary: string; date: string; status: string; note: string; sections: { title: string; paragraphs: string[] }[] };
+export type Article = {
+  slug: string; product: ProductId; products?: ProductId[]; kind?: "news" | "patch-notes";
+  editorialStatus?: "published" | "draft"; title: string; summary: string; date: string;
+  metaTitle?: string; metaDescription?: string; intro?: string[]; status: string; note: string;
+  sections: { title: string; paragraphs: string[]; bullets?: string[]; steps?: string[]; closingParagraphs?: string[] }[];
+  faq?: { question: string; answer: string; link?: { label: string; href: string } }[];
+  cta?: { title: string; text: string; label: string; href: string };
+};
 const editorialArticles: Article[] = [
+  agendoWhatsAppLaunch,
   {
     slug: "visto-relatorios-filtros-e-exportacao", product: "visto", date: "2026-10-08", status: "Em preparação",
     title: "Relatórios do Visto: o recorte certo, do filtro à exportação.",
@@ -80,10 +90,10 @@ const editorialArticles: Article[] = [
     ],
   },
   {
-    slug: "agendo-atendimento-assistido-whatsapp", product: "agendo", date: "2026-10-08", status: "Em validação",
+    slug: "agendo-atendimento-assistido-whatsapp", product: "agendo", date: "2026-10-08", status: "Registro de desenvolvimento",
     title: "Atendimento assistido no Agendo: entender antes de agendar.",
     summary: "A evolução do atendimento pelo WhatsApp prioriza contexto, informações completas e a aprovação do profissional.",
-    note: "Recurso em testes. O novo atendimento assistido ainda não está liberado para uso geral nem homologado para produção.",
+    note: "Este artigo registra os testes de 8 de outubro. Em 15 de outubro de 2026, a integração com WhatsApp passou a estar disponível mediante implementação. O uso de IA depende da solução definida para cada negócio; consulte a nota de lançamento entre os artigos relacionados.",
     sections: [
       { title: "Uma mensagem pode querer dizer várias coisas", paragraphs: ["Perguntar como funciona um serviço não é o mesmo que pedir um horário. As revisões recentes do atendimento assistido do Agendo trabalham essa diferença, distinguindo dúvidas sobre políticas, informações de serviços, pedidos de agendamento e solicitações de atendimento humano.", "Quando faltam dados necessários para um pedido, a interpretação deve reconhecer a dúvida e continuar a conversa. O objetivo é evitar que uma informação incompleta seja tratada como uma escolha já feita pelo cliente."] },
       { title: "A conversa usa o conteúdo aprovado", paragraphs: ["O negócio prepara as descrições dos serviços, perguntas frequentes e políticas que orientam o atendimento. A versão aprovada é a referência para as respostas; editar um rascunho não substitui automaticamente aquilo que já foi aprovado.", "A evolução também preserva informações parciais da conversa quando elas ainda são relevantes. Isso permite pedir o que falta, em vez de recomeçar a coleta a cada mensagem."] },
