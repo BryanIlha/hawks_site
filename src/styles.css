@@ -498,8 +498,8 @@ html { scrollbar-color: #766e63 var(--ink); }
 .editorial-page em, .journal-preview em, .constellation em { font-family: "Bodoni Moda", Georgia, serif; font-weight: 500; }
 .editorial-page p { text-wrap: pretty; }
 .editorial-page :focus-visible, .journal-preview :focus-visible, .constellation :focus-visible { outline: 2px solid #a43800; outline-offset: 5px; }
-.breadcrumbs { display: flex; flex-wrap: wrap; gap: .7rem; font-size: .78rem; color: #625b52; margin-bottom: 3.5rem; }
-.breadcrumbs > span { display: inline-flex; gap: .7rem; }
+.breadcrumbs { display: flex; align-items: center; flex-wrap: wrap; gap: .7rem; font-size: .78rem; color: #625b52; margin-bottom: 3.5rem; }
+.breadcrumbs > span { display: inline-flex; align-items: center; gap: .7rem; }
 .breadcrumbs a:hover { text-decoration: underline; text-underline-offset: .3em; }
 .product-detail-hero { display: grid; grid-template-columns: 1.12fr 1fr; align-items: center; gap: clamp(2rem, 5vw, 5rem); padding-bottom: 5.5rem; }
 .product-detail-hero h1 { font-size: clamp(2.8rem, 4.8vw, 4.7rem); max-width: 12ch; }
