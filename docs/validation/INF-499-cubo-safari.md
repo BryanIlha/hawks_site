@@ -37,6 +37,8 @@ Impeccable 4.4.0: skill, harden e craft-floor lidos; PRODUCT/DESIGN lidos direta
 
 ## Publicação e recuperação
 
-Publicar pelo deploy Git existente do projeto Cloudflare Pages `hawks-bi`, preservando Functions e variáveis. Conferir asset novo servido e Safari real após integração. Reverter a alteração por commit se houver regressão. Integração/publicação ainda pendentes neste registro inicial.
+Publicar pelo deploy Git existente do projeto Cloudflare Pages `hawks-bi`, preservando Functions e variáveis. Conferir asset novo servido e Safari real após integração. Reverter a alteração por commit se houver regressão. PR https://github.com/BryanIlha/hawks_site/pull/6 integrada em `533ec2db81aac0fdcb3d9eb692ccc62c2bc15ab2`, depois de todos os checks do head `30b2d918980042c4b1d2737dd82e4e9246402b62` passarem. Cloudflare Pages produção `82bf115f-8238-4cbf-8ba3-43ad91dc1e26` e verificação Hawks no merge: sucesso.
 
-Worktree da INF-499 retida até integração, comprovação da versão servida e encerramento seguro dos processos próprios. Não remover recursos alheios.
+Conferência pública em 27/10/2026: HTML serve `index-BZI-VO92.js`, cuja Home carrega `HawksCube-Bqafqm7o.js`; shader público contém a composição transparente corrigida. Safari real na aba original do site, após recarga, sem retângulo; Chrome real na URL pública também correto. Captura de produção preservada no resultado da conversa. Viewport Chrome 390×844 validou a composição mobile separada; não equivale a teste físico de iPhone. Nenhum formulário foi enviado.
+
+Worktree da INF-499 pode ser removida após a integração deste registro final e encerramento dos processos próprios. Build de validação preservado fora da worktree; capturas no resultado da conversa. Nenhum segredo/configuração adicionado. Recursos alheios preservados.
