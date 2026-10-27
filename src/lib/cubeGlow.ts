@@ -26,14 +26,12 @@ export function createCubeGlow(renderer: THREE.WebGLRenderer, scene: THREE.Scene
       tDiffuse: { value: null },
       glowTexture: { value: null },
       glowEnabled: { value: 0 },
-      backdrop: { value: new THREE.Color(0x080808) },
     },
     vertexShader: `varying vec2 vUv;
       void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
     fragmentShader: `uniform sampler2D tDiffuse;
       uniform sampler2D glowTexture;
       uniform float glowEnabled;
-      uniform vec3 backdrop;
       varying vec2 vUv;
       void main() {
         vec4 surface = texture2D(tDiffuse, vUv);
@@ -42,7 +40,12 @@ export function createCubeGlow(renderer: THREE.WebGLRenderer, scene: THREE.Scene
         vec2 edge = smoothstep(vec2(0.0), vec2(0.16), vUv)
           * smoothstep(vec2(0.0), vec2(0.16), 1.0 - vUv);
         light *= edge.x * edge.y;
-        gl_FragColor = vec4(surface.rgb + backdrop * (1.0 - surface.a) + light, 1.0);
+        vec3 color = surface.rgb + light;
+        // Keep empty pixels transparent, including after OutputPass. Include the
+        // visible radiance in alpha so bloom remains valid premultiplied color.
+        vec3 displayColor = sRGBTransferOETF(vec4(color, 1.0)).rgb;
+        float alpha = max(surface.a, clamp(max(displayColor.r, max(displayColor.g, displayColor.b)), 0.0, 1.0));
+        gl_FragColor = vec4(color, alpha);
       }`,
   });
   // Render-target textures must be assigned after ShaderPass clones its uniforms.
@@ -69,6 +72,8 @@ export function createCubeGlow(renderer: THREE.WebGLRenderer, scene: THREE.Scene
           decorations.forEach((object, index) => { object.visible = decorationVisibility[index]; });
         }
       }
+      // Never paint a CSS-colored backdrop into this WebGL canvas: Safari can
+      // composite it differently from the page even when their RGB values match.
       // The base image always follows the same color/alpha pipeline. Switching
       // between direct rendering and compositing made translucent lines flash white.
       final.render();
