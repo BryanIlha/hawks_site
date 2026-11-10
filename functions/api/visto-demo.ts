@@ -125,6 +125,7 @@ export async function handleVistoDemo(context: Context, requestFetch: typeof fet
 
   if (!env.VISTO_DEMO_API_TOKEN?.trim() || !env.TURNSTILE_SITE_KEY ||
     !env.TURNSTILE_SECRET_KEY || !env.RESEND_API_KEY || !env.CONTACT_FROM) return fail(503, "not_configured");
+  // Pages supports manual redirects. Reject non-success responses without forwarding the Cockpit token.
   const authorization = `Bearer ${env.VISTO_DEMO_API_TOKEN}`;
 
   if (request.method === "GET") {
@@ -132,7 +133,7 @@ export async function handleVistoDemo(context: Context, requestFetch: typeof fet
       const response = await requestFetch(availabilityUrl(), {
         headers: { Authorization: authorization, Accept: "application/json" },
         signal: AbortSignal.timeout(8000),
-        redirect: "error",
+        redirect: "manual",
       });
       if (!response.ok) return fail(503, "availability_unavailable");
       const result = record(await response.json());
@@ -180,7 +181,7 @@ export async function handleVistoDemo(context: Context, requestFetch: typeof fet
       headers: { Authorization: authorization, "Content-Type": "application/json" },
       body: JSON.stringify({ slotId, submissionId, lead: { ...lead, employeeCount: String(lead.employeeCount) } }),
       signal: AbortSignal.timeout(12000),
-      redirect: "error",
+      redirect: "manual",
     });
     const result = record(await response.json());
     const code = record(result?.error)?.code;

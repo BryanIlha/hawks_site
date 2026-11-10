@@ -78,7 +78,7 @@ test('Visto exposes only future one-hour slots, with the Cockpit token kept serv
     assert.match(from, /^\d{4}-\d{2}-\d{2}$/);
     assert.equal(Date.parse(to) - Date.parse(from), 30 * 86400000);
     assert.equal(options.headers.Authorization, 'Bearer synthetic-server-token');
-    assert.equal(options.redirect, 'error');
+    assert.equal(options.redirect, 'manual');
     return Response.json({ timeZone, slots: [
       { ...slot, ownerEmail: 'private@example.test' },
       { id: 'old', startsAt: '2020-01-01T10:00:00-03:00', endsAt: '2020-01-01T11:00:00-03:00' },
@@ -90,6 +90,10 @@ test('Visto exposes only future one-hour slots, with the Cockpit token kept serv
   const bad = await handleVistoDemo({ request: demoRequest('GET'), env: vistoEnv }, async () =>
     Response.json({ timeZone, slots: [{ ...slot, endsAt: '2030-11-20T14:30:00-03:00' }] }));
   assert.equal(bad.status, 502);
+  const redirect = await handleVistoDemo({ request: demoRequest('GET'), env: vistoEnv }, async () =>
+    Response.redirect('https://different.example.test/', 302));
+  assert.equal(redirect.status, 503);
+  assert.deepEqual(await redirect.json(), { ok: false, code: 'availability_unavailable' });
 });
 
 test('Visto sends qualification to Cockpit and notifies commercial after a confirmed booking', async () => {
@@ -118,6 +122,7 @@ test('Visto sends qualification to Cockpit and notifies commercial after a confi
       slotId: slot.id, submissionId: demoFields.submissionId, lead: { ...lead, employeeCount: '12' },
     });
     assert.equal(reservation.headers.Authorization, 'Bearer synthetic-server-token');
+    assert.equal(reservation.redirect, 'manual');
   }
   const notices = calls.filter((call) => call.url === 'https://api.resend.com/emails');
   assert.equal(notices.length, 2);
@@ -153,6 +158,7 @@ test('Visto does not confirm or notify on contention or an uncertain Cockpit res
     [() => Response.json({ error: { code: 'slot_unavailable' } }, { status: 409 }), 409, 'slot_unavailable'],
     [() => Response.json({ error: { code: 'submission_conflict' } }, { status: 409 }), 409, 'submission_conflict'],
     [() => Response.json({ private: true }, { status: 500 }), 502, 'booking_unavailable'],
+    [() => Response.redirect('https://different.example.test/', 302), 503, 'temporarily_unavailable'],
     [() => Response.json({ booking: null }), 502, 'booking_unavailable'],
     [() => { throw new Error('connection reset'); }, 503, 'temporarily_unavailable'],
   ]) {
