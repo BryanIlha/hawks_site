@@ -1,7 +1,8 @@
 import { readBody, type ContactEnv } from "./contact.ts";
 
 const origin = "https://visto.hawksbi.com.br";
-const cockpit = "https://cockpit.hawksbi.com.br/api/integrations/visto/demo/v1";
+const cockpit = "https://cockpit.hawksbi.com.br/api/integrations/booking/v1";
+const appTag = "visto";
 const timeZone = "America/Sao_Paulo";
 const oneHour = 60 * 60 * 1000;
 const calendarDate = new Intl.DateTimeFormat("en-CA", {
@@ -30,7 +31,7 @@ function availabilityUrl() {
   const from = `${parts.get("year")}-${parts.get("month")}-${parts.get("day")}`;
   const end = new Date(`${from}T00:00:00Z`);
   end.setUTCDate(end.getUTCDate() + 30);
-  return `${cockpit}/availability?${new URLSearchParams({ from, to: end.toISOString().slice(0, 10) })}`;
+  return `${cockpit}/availability?${new URLSearchParams({ appTag, from, to: end.toISOString().slice(0, 10) })}`;
 }
 
 function record(value: unknown): Record<string, unknown> | null {
@@ -179,7 +180,7 @@ export async function handleVistoDemo(context: Context, requestFetch: typeof fet
     const response = await requestFetch(`${cockpit}/bookings`, {
       method: "POST",
       headers: { Authorization: authorization, "Content-Type": "application/json" },
-      body: JSON.stringify({ slotId, submissionId, lead: { ...lead, employeeCount: String(lead.employeeCount) } }),
+      body: JSON.stringify({ appTag, slotId, submissionId, lead: { ...lead, employeeCount: String(lead.employeeCount) } }),
       signal: AbortSignal.timeout(12000),
       redirect: "manual",
     });

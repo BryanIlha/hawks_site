@@ -31,7 +31,7 @@ test('provider failure never returns success or leaks details', async () => {
 test('network failure and missing receipt never return success', async () => { const r = await handleContact({ request: req(), env }, async () => { throw new Error('network'); }); assert.equal(r.status, 503); let calls = 0; const missing = await handleContact({ request: req(), env }, async () => ++calls === 1 ? challenge() : Response.json({})); assert.equal(missing.status, 502); });
 
 const vistoOrigin = 'https://visto.hawksbi.com.br';
-const cockpit = 'https://cockpit.hawksbi.com.br/api/integrations/visto/demo/v1';
+const cockpit = 'https://cockpit.hawksbi.com.br/api/integrations/booking/v1';
 const vistoEnv = { ...env, VISTO_DEMO_API_TOKEN: 'synthetic-server-token' };
 const timeZone = 'America/Sao_Paulo';
 const slot = { id: 'opaque-slot', startsAt: '2030-11-20T14:00:00-03:00', endsAt: '2030-11-20T15:00:00-03:00' };
@@ -41,7 +41,7 @@ const lead = {
   employeeCount: 12, biggestPain: 'Conferir as rotinas dos turnos.', businessName: 'Padaria de Teste',
 };
 const demoFields = { lead, slotId: slot.id, website: '', submissionId: fields.submissionId, token: fields.token };
-const demoRequest = (method, body, origin = vistoOrigin) => new Request('https://hawksbi.com.br/api/visto-demo', {
+const demoRequest = (method, body, origin = vistoOrigin, query = '') => new Request(`https://hawksbi.com.br/api/visto-demo${query}`, {
   method,
   headers: { origin, 'Content-Type': 'application/json' },
   body: body === undefined ? undefined : JSON.stringify(body),
@@ -70,12 +70,15 @@ test('Visto permits browser requests only from its public origin and fails close
 });
 
 test('Visto exposes only future one-hour slots, with the Cockpit token kept server-side', async () => {
-  const response = await handleVistoDemo({ request: demoRequest('GET'), env: vistoEnv }, async (url, options) => {
+  const request = demoRequest('GET', undefined, vistoOrigin, '?appTag=another-app&from=2000-01-01&to=2000-01-02');
+  const response = await handleVistoDemo({ request, env: vistoEnv }, async (url, options) => {
     const target = new URL(url);
     assert.equal(target.origin + target.pathname, cockpit + '/availability');
     const from = target.searchParams.get('from');
     const to = target.searchParams.get('to');
+    assert.deepEqual(target.searchParams.getAll('appTag'), ['visto']);
     assert.match(from, /^\d{4}-\d{2}-\d{2}$/);
+    assert.notEqual(from, '2000-01-01');
     assert.equal(Date.parse(to) - Date.parse(from), 30 * 86400000);
     assert.equal(options.headers.Authorization, 'Bearer synthetic-server-token');
     assert.equal(options.redirect, 'manual');
@@ -99,15 +102,18 @@ test('Visto exposes only future one-hour slots, with the Cockpit token kept serv
 test('Visto sends qualification to Cockpit and notifies commercial after a confirmed booking', async () => {
   const calls = [];
   const tasks = [];
+  let bookings = 0;
   const deliver = async (url, options) => {
     calls.push({ url, ...options });
     if (url.includes('siteverify')) return demoChallenge();
-    if (url === cockpit + '/bookings') return Response.json({ booking: { ...booking, owner: 'private' } });
+    if (url === cockpit + '/bookings') {
+      return Response.json({ booking: { ...booking, owner: 'private' } }, { status: bookings++ === 0 ? 201 : 200 });
+    }
     return Response.json({ id: 'mail-receipt' });
   };
   for (const token of ['first-token', 'second-token']) {
     const result = await handleVistoDemo({
-      request: demoRequest('POST', { ...demoFields, token }),
+      request: demoRequest('POST', { ...demoFields, token, appTag: 'another-app' }),
       env: vistoEnv,
       waitUntil: (promise) => tasks.push(promise),
     }, deliver);
@@ -119,7 +125,7 @@ test('Visto sends qualification to Cockpit and notifies commercial after a confi
   assert.equal(reservations.length, 2);
   for (const reservation of reservations) {
     assert.deepEqual(JSON.parse(reservation.body), {
-      slotId: slot.id, submissionId: demoFields.submissionId, lead: { ...lead, employeeCount: '12' },
+      appTag: 'visto', slotId: slot.id, submissionId: demoFields.submissionId, lead: { ...lead, employeeCount: '12' },
     });
     assert.equal(reservation.headers.Authorization, 'Bearer synthetic-server-token');
     assert.equal(reservation.redirect, 'manual');
