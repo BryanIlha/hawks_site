@@ -1,3 +1,5 @@
+import { vistoCharacters } from "./vistoCharacters";
+import { vistoNovemberUpdates } from "./vistoNovemberUpdates";
 import { agendoWhatsAppLaunch } from "./agendoWhatsAppLaunch";
 
 export const products = [
@@ -63,6 +65,7 @@ export const products = [
 export type Product = typeof products[number];
 export type ProductId = Product["id"];
 export type Article = {
+  image?: { src: string; alt: string; width: number; height: number };
   slug: string; product: ProductId; products?: ProductId[]; kind?: "news" | "patch-notes";
   editorialStatus?: "published" | "draft"; title: string; summary: string; date: string;
   metaTitle?: string; metaDescription?: string; intro?: string[]; status: string; note: string;
@@ -71,6 +74,8 @@ export type Article = {
   cta?: { title: string; text: string; label: string; href: string };
 };
 const editorialArticles: Article[] = [
+  vistoNovemberUpdates,
+  vistoCharacters,
   agendoWhatsAppLaunch,
   {
     slug: "visto-relatorios-filtros-e-exportacao", product: "visto", date: "2026-10-08", status: "Em preparação",
