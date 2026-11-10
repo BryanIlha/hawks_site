@@ -11,7 +11,7 @@ const limit = 20000;
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } });
 const fail = (status: number, code: string) => json({ ok: false, code }, status);
 
-async function readBody(request: Request) {
+export async function readBody(request: Request) {
   if (Number(request.headers.get("content-length")) > limit) throw new Error("large");
   const reader = request.body?.getReader();
   if (!reader) throw new Error("invalid");
